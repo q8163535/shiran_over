@@ -1,0 +1,4 @@
+[Project]
+Manager=KDevCMakeManager
+Name=com_init_test
+VersionControl=
