@@ -1,0 +1,26 @@
+#!/bin/sh
+
+
+case "$1" in
+	start)
+		echo -n "restarting supervisord status: "
+		sh /etc/supervisor.d/restart_surpervisor_config.sh &
+		echo "done"
+		;;
+	stop)
+		echo -n "Stopping supervisord: "
+		
+		echo "done"
+		;;
+	restart)
+		
+		;;
+	reload)
+		
+		;;
+	*)
+		echo "Usage: $0 {start|stop|restart|reload}"
+		exit 1
+esac
+
+exit $?
