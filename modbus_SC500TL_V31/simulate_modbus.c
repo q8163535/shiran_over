@@ -19,7 +19,29 @@
 #include <errno.h>
 
 
+
+#define soft_ver  "1.0.0.0_2018-11-03" //  更新调试打印信息 管道发送数据内容
+
+void print_time_lable_show ( char *p_rec_str )
+{
+    struct tm ptm = { 0 };
+    time_t tNow =time ( NULL );
+    localtime_r ( &tNow, &ptm );
+    printf ( "time: %d.%d.%d-%d:%d:%d  --: %s \n",ptm.tm_year+1900,ptm.tm_mon+1,ptm.tm_mday,ptm.tm_hour,ptm.tm_min,ptm.tm_sec,p_rec_str );
+
+}
+
+#define DEBUG_TIME_OUTPUT(format, args...)  print_time_lable_show("TIME_OUTPUT:");\
+printf(format,##args);
+
+
+
 #define DEBUG_OPEN  1
+
+
+
+
+
 
 static uint8_t g_serialPortReadBuf[SERIAL_PORT_READ_BUF_LENGTH] = {0};
 static uint8_t g_pipeReadBuf[PIPE_READ_BUF_LENGTH] = {0};
@@ -443,230 +465,7 @@ static int32_t yt_data_is_changed ( uint8_t devNo, uint16_t reg_rev,int16_t reg_
 }
 
 
-#if 0
-//---------------------------------------------------------------------------------------------------------------------------- 5008
-static int32_t yt_p_rate_is_changed ( uint8_t devNo, uint16_t reg5008 )
-{
-    int32_t ret = 0;
 
-    static uint16_t lastReg5008[MAX_DEV_ADDR] = {0};
-
-    if ( lastReg5008[ARRAY_ID ( devNo )] != reg5008 )
-    {
-        ret = 1;
-        lastReg5008[ARRAY_ID ( devNo )] = reg5008;
-    }
-    else
-    {
-        ret = 0;
-    }
-
-    return ret;
-}
-
-//---------------------------------------------------------------------------------------------------------------------------- 5019
-static int32_t yt_power_factor_is_changed ( uint8_t devNo, uint16_t reg5019 )
-{
-    int32_t ret = 0;
-
-    static uint16_t lastReg5019[MAX_DEV_ADDR] = {0};
-
-    if ( lastReg5019[ARRAY_ID ( devNo )] != reg5019 )
-    {
-        ret = 1;
-        lastReg5019[ARRAY_ID ( devNo )] = reg5019;
-    }
-    else
-    {
-        ret = 0;
-    }
-
-    return ret;
-}
-
-//---------------------------------------------------------------------------------------------------------------------------- 5034
-static int32_t yt_state_ctl_is_changed ( uint8_t devNo, uint16_t reg5034 )
-{
-    int32_t ret = 0;
-
-    static uint16_t lastReg5034[MAX_DEV_ADDR] = {0};
-
-    if ( lastReg5034[ARRAY_ID ( devNo )] != reg5034 )
-    {
-        ret = 1;
-        lastReg5034[ARRAY_ID ( devNo )] = reg5034;
-    }
-    else
-    {
-        ret = 0;
-    }
-
-    return ret;
-}
-
-//----------------------------------------------------------------------------------------------------------------------------5036
-static int32_t yt_q_select_is_changed ( uint8_t devNo, uint16_t reg5036 )
-{
-    int32_t ret = 0;
-
-    static uint16_t lastReg5036[MAX_DEV_ADDR] = {0};
-
-    if ( lastReg5036[ARRAY_ID ( devNo )] != reg5036 )
-    {
-        ret = 1;
-        lastReg5036[ARRAY_ID ( devNo )] = reg5036;
-    }
-    else
-    {
-        ret = 0;
-    }
-
-    return ret;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------------5037
-static int32_t yt_q_rate_is_changed ( uint8_t devNo, uint16_t reg5037 )
-{
-    int32_t ret = 0;
-
-    static uint16_t lastReg5037[MAX_DEV_ADDR] = {0};
-
-    if ( lastReg5037[ARRAY_ID ( devNo )] != reg5037 )
-    {
-        ret = 1;
-        lastReg5037[ARRAY_ID ( devNo )] = reg5037;
-    }
-    else
-    {
-        ret = 0;
-    }
-
-    return ret;
-}
-
-//---------------------------------------------------------------------------------------------------------------------------- 5039
-static int32_t yt_p_real_is_changed ( uint8_t devNo, uint16_t reg5039 )
-{
-    int32_t ret = 0;
-
-    static uint16_t lastReg5039[MAX_DEV_ADDR] = {0};
-
-    if ( lastReg5039[ARRAY_ID ( devNo )] != reg5039 )
-    {
-        ret = 1;
-        lastReg5039[ARRAY_ID ( devNo )] = reg5039;
-    }
-    else
-    {
-        ret = 0;
-    }
-
-    return ret;
-}
-
-//---------------------------------------------------------------------------------------------------------------------------- 5040
-static int32_t yt_q_real_is_changed ( uint8_t devNo, uint16_t reg5040 )
-{
-    int32_t ret = 0;
-
-    static uint16_t lastReg5040[MAX_DEV_ADDR] = {0};
-
-    if ( lastReg5040[ARRAY_ID ( devNo )] != reg5040 )
-    {
-        ret = 1;
-        lastReg5040[ARRAY_ID ( devNo )] = reg5040;
-    }
-    else
-    {
-        ret = 0;
-    }
-
-    return ret;
-}
-
-//----------------------------------------------------------------------------------------------------------------------------5041
-static int32_t yt_p_up_is_changed ( uint8_t devNo, uint16_t reg5041 )
-{
-    int32_t ret = 0;
-
-    static uint16_t lastReg5041[MAX_DEV_ADDR] = {0};
-
-    if ( lastReg5041[ARRAY_ID ( devNo )] != reg5041 )
-    {
-        ret = 1;
-        lastReg5041[ARRAY_ID ( devNo )] = reg5041;
-    }
-    else
-    {
-        ret = 0;
-    }
-
-    return ret;
-}
-
-//----------------------------------------------------------------------------------------------------------------------------5042
-static int32_t yt_p_down_is_changed ( uint8_t devNo, uint16_t reg5042 )
-{
-    int32_t ret = 0;
-
-    static uint16_t lastReg5042[MAX_DEV_ADDR] = {0};
-
-    if ( lastReg5042[ARRAY_ID ( devNo )] != reg5042 )
-    {
-        ret = 1;
-        lastReg5042[ARRAY_ID ( devNo )] = reg5042;
-    }
-    else
-    {
-        ret = 0;
-    }
-
-    return ret;
-}
-
-//----------------------------------------------------------------------------------------------------------------------------5048
-static int32_t yt_close_delay_is_changed ( uint8_t devNo, uint16_t reg5048 )
-{
-    int32_t ret = 0;
-
-    static uint16_t lastReg5048[MAX_DEV_ADDR] = {0};
-
-    if ( lastReg5048[ARRAY_ID ( devNo )] != reg5048 )
-    {
-        ret = 1;
-        lastReg5048[ARRAY_ID ( devNo )] = reg5048;
-    }
-    else
-    {
-        ret = 0;
-    }
-
-    return ret;
-}
-
-//----------------------------------------------------------------------------------------------------------------------------5049
-static int32_t yt_close_slope_is_changed ( uint8_t devNo, uint16_t reg5049 )
-{
-    int32_t ret = 0;
-
-    static uint16_t lastReg5049[MAX_DEV_ADDR] = {0};
-
-    if ( lastReg5049[ARRAY_ID ( devNo )] != reg5049 )
-    {
-        ret = 1;
-        lastReg5049[ARRAY_ID ( devNo )] = reg5049;
-    }
-    else
-    {
-        ret = 0;
-    }
-
-    return ret;
-}
-
-#endif
 
 /*61850¹*/
 static int32_t parse_yc_data_and_send_to_pipe ( int32_t to61850PipeHandle,
@@ -885,13 +684,18 @@ uint16_t cmd_4x_02_len =  2;
 
 #endif
 //---------------------------------------------------------------------------------------------------------------------------- 3310~3361   53
-uint8_t cmd_3x_01[] = {0x01, 0x04, 0x0c, 0xed, 0x00, 0x35, 0xA3 ,0x78};
+uint8_t cmd_3x_01[ ] = { 0x01, 0x04, 0x0c, 0xed, 0x00, 0x35, 0xA3 ,0x78};
 
 uint16_t cmd_3x_01_len =  53;
 
 //---------------------------------------------------------------------------------------------------------------------------- 3256~3320 65
-uint8_t cmd_4x_01[] = {0x01, 0x03, 0x0c, 0xb7, 0x00, 0x41, 0x36 ,0x8C};
+uint8_t cmd_4x_01[ ] = { 0x01, 0x03, 0x0c, 0xb7, 0x00, 0x41, 0x36 ,0x8C};
 uint16_t cmd_4x_01_len =  65;
+
+
+//---------------------------------------------------------------------------------------------------------------------------- 3330~3412 83
+uint8_t cmd_4x_02[ ] = { 0x01, 0x03, 0x0d, 0x02, 0x00, 0x53, 0xA6 ,0x9B};
+uint16_t cmd_4x_02_len =  83;
 
 
 
@@ -2163,19 +1967,7 @@ static void deal_with_if_dev_is_lost ( uint8_t devNo,
 12,¸ù¾ÝÊµ¼ÊÉè±¸µÄÊýÁ¿,ÐÞ¸Äµ±Ç°µÄÉè±¸±àºÅÒÔ´ïµ½±éÀúÉè±¸µÄÄ¿µÄ¡£
 */
 
-#define soft_ver  "1.0.0.0_2018-11-03" //  更新调试打印信息 管道发送数据内容
 
-void print_time_lable_show ( char *p_rec_str )
-{
-    struct tm ptm = { 0 };
-    time_t tNow =time ( NULL );
-    localtime_r ( &tNow, &ptm );
-    printf ( "time: %d.%d.%d-%d:%d:%d  --: %s \n",ptm.tm_year+1900,ptm.tm_mon+1,ptm.tm_mday,ptm.tm_hour,ptm.tm_min,ptm.tm_sec,p_rec_str );
-
-}
-
-#define DEBUG_TIME_OUTPUT(format, args...)  print_time_lable_show("TIME_OUTPUT:");\
-printf(format,##args);
 
 
 int32_t main ( int argc, char* argv[] )

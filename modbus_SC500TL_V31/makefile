@@ -8,4 +8,4 @@ feeddog.o: feeddog.c
 	arm-none-linux-gnueabi-gcc -Wall  -c feeddog.c	
 
 clean:
-	/bin/rm *.o *~
+	/bin/rm   -rf *.o   *~   simulate_modbus
