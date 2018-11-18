@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<protocol ProtocolCode="0x01000000" ProtocolVer="1.0.0.0">
+		<table id="1" cmd="4">
+			<register type="R">
+				<point DataName="设备类型编码" DataId="1" DataAddress="15070" DataLen="2" DataInfo="运行信息" DataType="I" DataSign="U" DataDecimal="1" DataMin="0" DataMax="0x7fffffff" DataMin1="0" DataMax1="0" RevFunc="0" SendFunc="0" FifoFunc="0"/>
+				<point DataName="整机额定有功功率" DataId="2" DataAddress="15071" DataLen="2" DataInfo="运行信息" DataType="F" DataSign="U" DataDecimal="0.1" DataUnit="kW" DataMin="0" DataMax="0x7fffffff" DataMin1="0" DataMax1="0" RevFunc="0" SendFunc="0" FifoFunc="0"/>
+				<point DataName="输出类型" DataId="3" DataAddress="15072" DataLen="2" DataInfo="运行信息" DataType="I" DataSign="U" DataDecimal="1" DataUnit="kW" DataMin="0" DataMax="0x7fffffff" DataMin1="0" DataMax1="0" RevFunc="0" SendFunc="0" FifoFunc="0"/>
+				<point DataName="整机日发电量" DataId="4" DataAddress="15073" DataLen="4" DataInfo="运行信息" DataType="F" DataSign="U" DataDecimal="0.1" DataUnit="kWh" DataMin="0" DataMax="0x7fffffff" DataMin1="0" DataMax1="0" RevFunc="0" SendFunc="0" FifoFunc="0"/>
+				<point DataName="月发电量" DataId="5" DataAddress="15075" DataLen="4" DataInfo="运行信息" DataType="I" DataSign="U" DataDecimal="1" DataUnit="kWh" DataMin="0" DataMax="0x7fffffff" DataMin1="0" DataMax1="0" RevFunc="0" SendFunc="0" FifoFunc="0"/>
+				<point DataName="总发电量" DataId="6" DataAddress="15077" DataLen="4" DataInfo="运行信息" DataType="I" DataSign="U" DataDecimal="1" DataUnit="kWh" DataMin="0" DataMax="0x7fffffff" DataMin1="0" DataMax1="0" RevFunc="0" SendFunc="0" FifoFunc="0"/>
+				<point DataName="整机二氧化碳减排" DataId="7" DataAddress="15079" DataLen="4" DataInfo="运行信息" DataType="I" DataSign="U" DataDecimal="1" DataUnit="Kg" DataMin="0" DataMax="0x7fffffff" DataMin1="0" DataMax1="0" RevFunc="0" SendFunc="0" FifoFunc="0"/>
+				<point DataName="整机日运行分钟" DataId="8" DataAddress="15081" DataLen="2" DataInfo="运行信息" DataType="I" DataSign="U" DataDecimal="1" DataUnit="min" DataMin="0" DataMax="0x7fffffff" DataMin1="0" DataMax1="0" RevFunc="0" SendFunc="0" FifoFunc="0"/>
+				<point DataName="整机总运行时间" DataId="9" DataAddress="15082" DataLen="4" DataInfo="运行信息" DataType="I" DataSign="U" DataDecimal="1" DataUnit="h" DataMin="0" DataMax="0x7fffffff" DataMin1="0" DataMax1="0" RevFunc="0" SendFunc="0" FifoFunc="0"/>
+				<point DataName="逆变单元1直流电压" DataId="10" DataAddress="15084" DataLen="2" DataInfo="运行信息" DataType="F" DataSign="S" DataDecimal="0.1" DataUnit="V" DataMin="0" DataMax="0x7fffffff" DataMin1="0" DataMax1="0" RevFunc="0" SendFunc="0" FifoFunc="0"/>
+				<point DataName="逆变单元1直流电流" DataId="11" DataAddress="15085" DataLen="2" DataInfo="运行信息" DataType="F" DataSign="S" DataDecimal="0.1" DataUnit="A" DataMin="0" DataMax="0x7fffffff" DataMin1="0" DataMax1="0" RevFunc="0" SendFunc="0" FifoFunc="0"/>
+				</register>
+		</table>
+		<table id="2" cmd="3">
+			<register type="RW">
+				<point DataName="PC_Year" DataId="165" DataAddress="15000" DataLen="2" DataInfo="设置参数" DataType="I" DataSign="U" DataDecimal="1" DataMin="2000" DataMax="3000" DataMin1="0" DataMax1="0" RevFunc="receive_time_year" SendFunc="send_time_year_get" FifoFunc="0"/>
+				<point DataName="电压自动调节回差" DataId="198" DataAddress="15044" DataLen="2" DataInfo="设置参数" DataType="I" DataSign="U" DataUnit="%" DataDecimal="1" DataMin="0" DataMax="10" DataMin1="0" DataMax1="0" RevFunc="0" SendFunc="0" FifoFunc="0"/>
+			</register>
+		</table>
+		<table id="3" cmd="3">
+			<register type="RW">
+				<point DataName="设备序列号1" DataId="199" DataAddress="33106" DataLen="2" DataInfo="系统参数" DataType="I" DataSign="U" DataDecimal="1" DataMin="0" DataMax="0x7fffffff" DataMin1="0" DataMax1="0" RevFunc="0" SendFunc="0" FifoFunc="0"/>
+				<point DataName="设备序列号2" DataId="200" DataAddress="33107" DataLen="2" DataInfo="系统参数" DataType="I" DataSign="U" DataDecimal="1" DataMin="0" DataMax="0x7fffffff" DataMin1="0" DataMax1="0" RevFunc="0" SendFunc="0" FifoFunc="0"/>
+				<point DataName="设备序列号3" DataId="201" DataAddress="33108" DataLen="2" DataInfo="系统参数" DataType="I" DataSign="U" DataDecimal="1" DataMin="0" DataMax="0x7fffffff" DataMin1="0" DataMax1="0" RevFunc="0" SendFunc="0" FifoFunc="0"/>
+				<point DataName="设备序列号4" DataId="202" DataAddress="33109" DataLen="2" DataInfo="系统参数" DataType="I" DataSign="U" DataDecimal="1" DataMin="0" DataMax="0x7fffffff" DataMin1="0" DataMax1="0" RevFunc="0" SendFunc="0" FifoFunc="0"/>
+				</register>
+		</table>
+	</protocol>
+</root>

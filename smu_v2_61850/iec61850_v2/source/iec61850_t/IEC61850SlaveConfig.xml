@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<FirmwareVersion>1.1.0.0</FirmwareVersion>
+	<XmlVersion>1.0.0</XmlVersion>
+	<client>IEC61850</client>
+	<commport>
+		<mbmslaver id="1" DevCode="347" UnionDev="1">
+			<table DevId="1" TSlaveID="3" CSlaveID="" inCOM="" position="SG_LOGGER"/>
+		</mbmslaver>
+	</commport>
+	<slaver id="1">
+		<name DevCode="347" DevName="SC500" UnionDev="1">SG_LOGGER</name>
+		<protocol>
+			<table id="1" ProtocolType="modbus" ProtocolName="SC500_PC_Protocol_IEC61850.xml" ProtocolByte="高字节前低字节后" ProtocolWord="低字前高字后"/>
+		</protocol>
+	</slaver>
+</root>

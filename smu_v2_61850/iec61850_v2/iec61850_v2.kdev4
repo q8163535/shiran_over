@@ -1,0 +1,4 @@
+[Project]
+Manager=KDevCMakeManager
+Name=iec61850_v2
+VersionControl=
