@@ -20,7 +20,9 @@
 
 
 
-#define soft_ver  "1.0.0.0_2018-11-03" //  更新调试打印信息 管道发送数据内容
+//#define soft_ver  "1.0.0.0_2018-11-03" //  更新调试打印信息 管道发送数据内容
+
+#define soft_ver  "1.0.0.1_2018-11-19" //  更新打开串口为 ttyO1
 
 void print_time_lable_show ( char *p_rec_str )
 {
@@ -186,7 +188,7 @@ static int32_t read_data_from_modbus ( int32_t handle, uint8_t* buf, uint32_t bu
     memset ( buf,0x00,buflen );
     ret = read ( handle, buf, buflen );
 #if DEBUG_OPEN
-    printf ( "\n RECV_CMD_TO_MODBUS  :  len_num: 0x%0x   \n",ret );
+    printf ( "\n RECV_CMD_TO_MODBUS  :  read_len_num: %d   ret %d \n",buflen ,ret );
 
     int32_t data_id  = 0;
     for ( data_id = 0 ; data_id < ret; data_id ++ )
@@ -443,7 +445,7 @@ static int32_t set_a_value_to_modbus ( int32_t serialPortHandle, uint16_t regadd
     return 0;
 }
 
-#define MAX_LINE  30
+#define MAX_LINE  128
 static uint16_t lastReg[ MAX_LINE ][ MAX_DEV_ADDR ] ;//= { 0 };
 
 
@@ -497,70 +499,85 @@ static int32_t parse_yc_data_and_send_to_pipe ( int32_t to61850PipeHandle,
 
 //3310-3310*2
 
-    dataPointer[dataIndex].dataID       = 3311;  //直流电压
+    dataPointer[dataIndex].dataID       = 3311;  //直流电流
     dataPointer[dataIndex].val.value_f  = ( float ) ( ( int32_t ) ( ( ( uint16_t ) modbusBuf[2] << 8 ) + modbusBuf[3] ) ) / 10;
     dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
     dataIndex++;
 
 
 
-    dataPointer[dataIndex].dataID       = 3312;  //直流电压
+    dataPointer[dataIndex].dataID       = 3312;  //直流功率
     dataPointer[dataIndex].val.value_f  = ( float ) ( ( int32_t ) ( ( ( uint16_t ) modbusBuf[4] << 8 ) + modbusBuf[5] ) ) / 10;
     dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
     dataIndex++;
 
 
 
-    dataPointer[dataIndex].dataID       = 3313;  //直流电压
+    dataPointer[dataIndex].dataID       = 3313;  //电网电压VAB
+
     dataPointer[dataIndex].val.value_f  = ( float ) ( ( int32_t ) ( ( ( uint16_t ) modbusBuf[6] << 8 ) + modbusBuf[7] ) ) / 10;
     dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
     dataIndex++;
 
 
-    dataPointer[dataIndex].dataID       = 3314;  //直流电压
+    dataPointer[dataIndex].dataID       = 3314;  //电网电压VBC
     dataPointer[dataIndex].val.value_f  = ( float ) ( ( int32_t ) ( ( ( uint16_t ) modbusBuf[8] << 8 ) + modbusBuf[9] ) ) / 10;
     dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
     dataIndex++;
 
 
-    dataPointer[dataIndex].dataID       = 3315;  //直流电压
+    dataPointer[dataIndex].dataID       = 3315;  //电网电压VCA
     dataPointer[dataIndex].val.value_f  = ( float ) ( ( int32_t ) ( ( ( uint16_t ) modbusBuf[10] << 8 ) + modbusBuf[11] ) ) / 10;
     dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
     dataIndex++;
 
 
-    dataPointer[dataIndex].dataID       = 3316;  //直流电压
+    dataPointer[dataIndex].dataID       = 3316;  //A相电流
     dataPointer[dataIndex].val.value_f  = ( float ) ( ( int32_t ) ( ( ( uint16_t ) modbusBuf[12] << 8 ) + modbusBuf[13] ) ) / 10;
     dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
     dataIndex++;
 
 
-    dataPointer[dataIndex].dataID       = 3317;  //直流电压
+    dataPointer[dataIndex].dataID       = 3317;  //B相电流
     dataPointer[dataIndex].val.value_f  = ( float ) ( ( int32_t ) ( ( ( uint16_t ) modbusBuf[14] << 8 ) + modbusBuf[15] ) ) / 10;
     dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
     dataIndex++;
 
 
-    dataPointer[dataIndex].dataID       = 3318;  //直流电压
+    dataPointer[dataIndex].dataID       = 3318;  //C相电流
     dataPointer[dataIndex].val.value_f  = ( float ) ( ( int32_t ) ( ( ( uint16_t ) modbusBuf[16] << 8 ) + modbusBuf[17] ) ) / 10;
     dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
     dataIndex++;
 
 
-    dataPointer[dataIndex].dataID       = 3319;//5033 5034 total var
+    dataPointer[dataIndex].dataID       = 3319;//有功功率
     dataPointer[dataIndex].val.value_f  = ( float ) ( ( int32_t ) ( ( ( uint32_t ) modbusBuf[18] << 8 ) + modbusBuf[19] +
                                           ( ( uint32_t ) modbusBuf[20] << 24 ) + ( ( uint32_t ) modbusBuf[21]<<16 ) ) ) /10;
     dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
     dataIndex++;
 
 
-    dataPointer[dataIndex].dataID       = 3321;//5033 5034 total var
+    dataPointer[dataIndex].dataID       = 3321;//无功功率
     dataPointer[dataIndex].val.value_f  = ( float ) ( ( int32_t ) ( ( ( uint32_t ) modbusBuf[22] << 8 ) + modbusBuf[23] +
                                           ( ( uint32_t ) modbusBuf[24] << 24 ) + ( ( uint32_t ) modbusBuf[25]<<16 ) ) ) /10;
     dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
     dataIndex++;
 
-#if 0
+
+    dataPointer[dataIndex].dataID       = 3323;//正级对地阻抗
+    dataPointer[dataIndex].val.value_f  = ( float ) ( ( int32_t ) ( ( ( uint32_t ) modbusBuf[26] << 8 ) + modbusBuf[27] +
+                                          ( ( uint32_t ) modbusBuf[28] << 24 ) + ( ( uint32_t ) modbusBuf[29]<<16 ) ) ) /100;
+    dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+    dataIndex++;
+
+    dataPointer[dataIndex].dataID       = 3325;//负级对地阻抗
+    dataPointer[dataIndex].val.value_f  = ( float ) ( ( int32_t ) ( ( ( uint32_t ) modbusBuf[30] << 8 ) + modbusBuf[31] +
+                                          ( ( uint32_t ) modbusBuf[32] << 24 ) + ( ( uint32_t ) modbusBuf[33]<<16 ) ) ) /100;
+    dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+    dataIndex++;
+
+
+#if 1
     dataPointer[dataIndex].dataID       = 3333;  //充放电状态
     dataPointer[dataIndex].val.value_32  = ( uint32_t ) ( ( uint32_t ) ( ( ( uint16_t ) modbusBuf[46] << 8 ) + modbusBuf[47] ) ) ;
     dataPointer[dataIndex].val_type     = TYPE_UINT32;
@@ -568,7 +585,7 @@ static int32_t parse_yc_data_and_send_to_pipe ( int32_t to61850PipeHandle,
 #endif
 
 
-    dataPointer[dataIndex].dataID       = 3334;//
+    dataPointer[dataIndex].dataID       = 3334;// 日充电量
     dataPointer[dataIndex].val.value_f  = ( float ) ( ( int32_t ) ( ( ( uint32_t ) modbusBuf[48] << 8 ) + modbusBuf[49] +
                                           ( ( uint32_t ) modbusBuf[50] << 24 ) + ( ( uint32_t ) modbusBuf[51]<<16 ) ) ) /10;
     dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
@@ -576,15 +593,15 @@ static int32_t parse_yc_data_and_send_to_pipe ( int32_t to61850PipeHandle,
 
 
 
-    dataPointer[dataIndex].dataID       = 3336;//
+    dataPointer[dataIndex].dataID       = 3336;//日放电量
     dataPointer[dataIndex].val.value_f  = ( float ) ( ( int32_t ) ( ( ( uint32_t ) modbusBuf[52] << 8 ) + modbusBuf[53] +
-                                          ( ( uint32_t ) modbusBuf[54] << 24 ) + ( ( uint32_t ) modbusBuf[55]<<16 ) ) );
+                                          ( ( uint32_t ) modbusBuf[54] << 24 ) + ( ( uint32_t ) modbusBuf[55]<<16 ) ) ) /10;
     dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
     dataIndex++;
 
 
 
-    dataPointer[dataIndex].dataID       = 3338;//
+    dataPointer[dataIndex].dataID       = 3338;//总充电量
     dataPointer[dataIndex].val.value_32  = ( uint32_t ) ( ( uint32_t ) ( ( ( uint32_t ) modbusBuf[56] << 8 ) + modbusBuf[57] +
                                            ( ( uint32_t ) modbusBuf[58] << 24 ) + ( ( uint32_t ) modbusBuf[59]<<16 ) ) );
     dataPointer[dataIndex].val_type     = TYPE_UINT32;
@@ -592,7 +609,7 @@ static int32_t parse_yc_data_and_send_to_pipe ( int32_t to61850PipeHandle,
 
 
 
-    dataPointer[dataIndex].dataID       = 3340;//
+    dataPointer[dataIndex].dataID       = 3340;//总放电量
     dataPointer[dataIndex].val.value_32  = ( uint32_t ) ( ( uint32_t ) ( ( ( uint32_t ) modbusBuf[60] << 8 ) + modbusBuf[61] +
                                            ( ( uint32_t ) modbusBuf[62] << 24 ) + ( ( uint32_t ) modbusBuf[63]<<16 ) ) );
     dataPointer[dataIndex].val_type     = TYPE_UINT32;
@@ -601,16 +618,98 @@ static int32_t parse_yc_data_and_send_to_pipe ( int32_t to61850PipeHandle,
 
 
 
+    dataPointer[dataIndex].dataID       = 3348;  //额定输出功率
+    dataPointer[dataIndex].val.value_f  = ( float ) ( ( int32_t ) ( ( ( uint16_t ) modbusBuf[76] << 8 ) + modbusBuf[77] ) ) / 10;
+    dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+    dataIndex++;
 
-    dataPointer[dataIndex].dataID       = 3359;//
+
+    dataPointer[dataIndex].dataID       = 3349;  //额定输出无功功率
+    dataPointer[dataIndex].val.value_f  = ( float ) ( ( int32_t ) ( ( ( uint16_t ) modbusBuf[78] << 8 ) + modbusBuf[79] ) ) / 10;
+    dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+    dataIndex++;
+
+
+    dataPointer[dataIndex].dataID       = 3352;  //电网频率
+    dataPointer[dataIndex].val.value_f  = ( float ) ( ( int32_t ) ( ( ( uint16_t ) modbusBuf[84] << 8 ) + modbusBuf[85] ) ) / 100;
+    dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+    dataIndex++;
+
+
+    dataPointer[dataIndex].dataID       = 3353;  //功率因素
+    dataPointer[dataIndex].val.value_f  = ( float ) ( ( int32_t ) ( ( ( uint16_t ) modbusBuf[86] << 8 ) + modbusBuf[87] ) ) / 1000;
+    dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+    dataIndex++;
+
+    dataPointer[dataIndex].dataID       = 3354;  //环境温度
+    dataPointer[dataIndex].val.value_f  = ( float ) ( ( int32_t ) ( ( ( uint16_t ) modbusBuf[88] << 8 ) + modbusBuf[89] ) ) / 10;
+    dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+    dataIndex++;
+
+
+
+
+    dataPointer[dataIndex].dataID       = 3357;  //日充电时数
+    dataPointer[dataIndex].val.value_32  = ( uint32_t ) ( ( int32_t ) ( ( ( uint16_t ) modbusBuf[94] << 8 ) + modbusBuf[95] ) );
+    dataPointer[dataIndex].val_type     = TYPE_UINT32;
+    dataIndex++;
+
+
+    dataPointer[dataIndex].dataID       = 3358;  //日放电时数
+    dataPointer[dataIndex].val.value_32  = ( uint32_t ) ( ( int32_t ) ( ( ( uint16_t ) modbusBuf[96] << 8 ) + modbusBuf[97] ) );
+    dataPointer[dataIndex].val_type     = TYPE_UINT32;
+    dataIndex++;
+
+
+
+
+    dataPointer[dataIndex].dataID       = 3359;//总充电时数
     dataPointer[dataIndex].val.value_32  = ( uint32_t ) ( ( uint32_t ) ( ( ( uint32_t ) modbusBuf[98] << 8 ) + modbusBuf[99] +
                                            ( ( uint32_t ) modbusBuf[100] << 24 ) + ( ( uint32_t ) modbusBuf[101]<<16 ) ) );
     dataPointer[dataIndex].val_type     = TYPE_UINT32;
     dataIndex++;
 
-    dataPointer[dataIndex].dataID       = 3361;//
+
+    dataPointer[dataIndex].dataID       = 3361;//总放电时数
     dataPointer[dataIndex].val.value_32  = ( uint32_t ) ( ( uint32_t ) ( ( ( uint32_t ) modbusBuf[102] << 8 ) + modbusBuf[103] +
                                            ( ( uint32_t ) modbusBuf[104] << 24 ) + ( ( uint32_t ) modbusBuf[105]<<16 ) ) );
+    dataPointer[dataIndex].val_type     = TYPE_UINT32;
+    dataIndex++;
+
+
+
+
+
+    dataPointer[dataIndex].dataID       = 3363;//可用充电功率
+    dataPointer[dataIndex].val.value_f  = ( float ) ( ( int32_t ) ( ( ( uint32_t ) modbusBuf[106] << 8 ) + modbusBuf[107] +
+                                          ( ( uint32_t ) modbusBuf[108] << 24 ) + ( ( uint32_t ) modbusBuf[109]<<16 ) ) ) /10;
+    dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+    dataIndex++;
+
+
+    dataPointer[dataIndex].dataID       = 3365;//可用放电功率
+    dataPointer[dataIndex].val.value_f  = ( float ) ( ( int32_t ) ( ( ( uint32_t ) modbusBuf[110] << 8 ) + modbusBuf[111] +
+                                          ( ( uint32_t ) modbusBuf[112] << 24 ) + ( ( uint32_t ) modbusBuf[113]<<16 ) ) ) /10;
+    dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+    dataIndex++;
+
+
+    dataPointer[dataIndex].dataID       = 3367;//可用感性无功
+    dataPointer[dataIndex].val.value_f  = ( float ) ( ( int32_t ) ( ( ( uint32_t ) modbusBuf[114] << 8 ) + modbusBuf[115] +
+                                          ( ( uint32_t ) modbusBuf[116] << 24 ) + ( ( uint32_t ) modbusBuf[117]<<16 ) ) ) /10;
+    dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+    dataIndex++;
+
+    dataPointer[dataIndex].dataID       = 3369;//可用容性无功
+    dataPointer[dataIndex].val.value_f  = ( float ) ( ( int32_t ) ( ( ( uint32_t ) modbusBuf[118] << 8 ) + modbusBuf[119] +
+                                          ( ( uint32_t ) modbusBuf[120] << 24 ) + ( ( uint32_t ) modbusBuf[121]<<16 ) ) ) /10;
+    dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+    dataIndex++;
+
+
+
+    dataPointer[dataIndex].dataID       = 3371;//工作状态
+    dataPointer[dataIndex].val.value_32  = ( uint32_t ) ( ( int32_t ) ( ( ( uint16_t ) modbusBuf[122] << 8 ) + modbusBuf[123] ) );
     dataPointer[dataIndex].val_type     = TYPE_UINT32;
     dataIndex++;
 
@@ -683,10 +782,10 @@ uint8_t cmd_4x_02[] = {0x01, 0x03, 0x0c, 0xf6, 0x00, 0x02, 0x27  , 0x69};
 uint16_t cmd_4x_02_len =  2;
 
 #endif
-//---------------------------------------------------------------------------------------------------------------------------- 3310~3361   53
-uint8_t cmd_3x_01[ ] = { 0x01, 0x04, 0x0c, 0xed, 0x00, 0x35, 0xA3 ,0x78};
+//---------------------------------------------------------------------------------------------------------------------------- 3310~3371   访问地址 3309 个数  62
+uint8_t cmd_3x_01[ ] = { 0x01, 0x04, 0x0c, 0xed, 0x00, 0x3e, 0xE2 ,0xBF };
 
-uint16_t cmd_3x_01_len =  53;
+uint16_t cmd_3x_01_len =  62;
 
 //---------------------------------------------------------------------------------------------------------------------------- 3256~3320 65
 uint8_t cmd_4x_01[ ] = { 0x01, 0x03, 0x0c, 0xb7, 0x00, 0x41, 0x36 ,0x8C};
@@ -815,26 +914,32 @@ static int32_t parse_yx_data_and_packet_it ( uint8_t * modbusBuf, int devNo )
 
     static uint32_t lastFltState1 = 0, lastFltState1Bit[32] = {0};
     static uint32_t lastFltState2 = 0, lastFltState2Bit[32] = {0};
-    static uint32_t lastNodeState1 =0,lastNodeState1Bit[32] = {0};
-    static uint32_t lastNodeState2 = 0, lastNodeState2Bit[32] = {0};
-    static uint32_t lastAlarm =0, lastAlarmBit[32] = {0};
-    static uint32_t lastRun = 0,  lastRunBit[32] = {0};
+    static uint32_t lastalarm_run_state =0, lastalarm_run_stateBit[32] = {0};
+    static uint32_t lastalarm_run_state2 = 0, lastalarm_run_state2Bit[32] = {0};
+    static uint32_t last_work_state =0, last_work_stateBit[32] = {0};
+    static uint32_t last_work_mode = 0,  last_work_modeBit[32] = {0};
 
-    static uint32_t lastCharging = 0,  lastChargingBit[32] = {0};
+    static uint32_t last_charging = 0,  last_chargingBit[32] = {0};
 
     static uint32_t newFltState1 = 0, newFltState1Bit[32] = {0};
     static uint32_t newFltState2 = 0,  newFltState2Bit[32] = {0};
-    static uint32_t newNodeState1 =0, newNodeState1Bit[32] = {0};
-    static uint32_t newNodeState2 = 0,newNodeState2Bit[32] = {0};
-    static uint32_t newAlarm =0,  newAlarmBit[32] = {0};
-    static uint32_t newRun = 0,newRunBit[32] = {0};
+    static uint32_t newalarm_run_state =0, newalarm_run_stateBit[32] = {0};
+    static uint32_t newalarm_run_state2 = 0,newalarm_run_state2Bit[32] = {0};
+    static uint32_t new_work_state =0,  new_work_stateBit[32] = {0};
+    static uint32_t new_work_mode = 0,new_work_modeBit[32] = {0};
 
-    static uint32_t newCharging = 0,  newChargingBit[32] = {0};
+    static uint32_t new_charging = 0,  new_chargingBit[32] = {0};
+
+
+    static uint32_t last_pcs_node = 0,  last_pcs_nodeBit[32] = {0};
+
+    static uint32_t new_pcs_node = 0, new_pcs_nodeBit[32] = {0};
+
 
     // 3327 3328 3329 3331 3342  3344
-    newNodeState1  = ( uint32_t ) ( ( uint32_t ) ( ( ( uint16_t ) modbusBuf[34] << 8 ) + modbusBuf[35] ) ) ;  //告警运行状态1
+    newalarm_run_state  = ( uint32_t ) ( ( uint32_t ) ( ( ( uint16_t ) modbusBuf[34] << 8 ) + modbusBuf[35] ) ) ;  //告警运行状态1
 
-    newNodeState2 = ( uint32_t ) ( ( uint32_t ) ( ( ( uint16_t ) modbusBuf[36] << 8 ) + modbusBuf[37] ) ) ;  //告警运行状态2
+    newalarm_run_state2 = ( uint32_t ) ( ( uint32_t ) ( ( ( uint16_t ) modbusBuf[36] << 8 ) + modbusBuf[37] ) ) ;  //告警运行状态2
 
     newFltState1  = ( uint32_t ) ( ( uint32_t ) ( ( ( uint32_t ) modbusBuf[38] << 8 ) + modbusBuf[39] +
                                    ( ( uint32_t ) modbusBuf[40] << 24 ) + ( ( uint32_t ) modbusBuf[41]<<16 ) ) );  //故障状态1
@@ -842,14 +947,20 @@ static int32_t parse_yx_data_and_packet_it ( uint8_t * modbusBuf, int devNo )
     newFltState2 = ( uint32_t ) ( ( uint32_t ) ( ( ( uint32_t ) modbusBuf[42] << 8 ) + modbusBuf[43] +
                                   ( ( uint32_t ) modbusBuf[44] << 24 ) + ( ( uint32_t ) modbusBuf[45]<<16 ) ) );  //故障状态2
 
+#if 0
+    new_work_state = ( uint32_t ) ( ( uint32_t ) ( ( ( uint32_t ) modbusBuf[64] << 8 ) + modbusBuf[65] +
+                                    ( ( uint32_t ) modbusBuf[66] << 24 ) + ( ( uint32_t ) modbusBuf[67]<<16 ) ) );  //工作状态
+#endif
 
-    newAlarm = ( uint32_t ) ( ( uint32_t ) ( ( ( uint32_t ) modbusBuf[64] << 8 ) + modbusBuf[65] +
-                              ( ( uint32_t ) modbusBuf[66] << 24 ) + ( ( uint32_t ) modbusBuf[67]<<16 ) ) );  //工作状态
+    new_work_mode = ( uint32_t ) ( ( uint32_t ) ( ( ( uint16_t ) modbusBuf[68] << 8 ) + modbusBuf[69] ) ) ;  //工作模式
 
-    newRun = ( uint32_t ) ( ( uint32_t ) ( ( ( uint16_t ) modbusBuf[68] << 8 ) + modbusBuf[69] ) ) ;  //工作模式
+#if 0
+    new_charging = ( uint32_t ) ( ( uint32_t ) ( ( ( uint16_t ) modbusBuf[46] << 8 ) + modbusBuf[47] ) ) ;  //充放电状态
 
+#endif
 
-    newCharging = ( uint32_t ) ( ( uint32_t ) ( ( ( uint16_t ) modbusBuf[46] << 8 ) + modbusBuf[47] ) ) ;  //充放电状态
+    new_pcs_node = ( uint32_t ) ( ( uint32_t ) ( ( ( uint32_t ) modbusBuf[90] << 8 ) + modbusBuf[91] +
+                                  ( ( uint32_t ) modbusBuf[92] << 24 ) + ( ( uint32_t ) modbusBuf[93]<<16 ) ) );  //pcs节点状态
 
 
     if ( newFltState1 == lastFltState1 )
@@ -903,8 +1014,8 @@ static int32_t parse_yx_data_and_packet_it ( uint8_t * modbusBuf, int devNo )
     }
 
     //
-    //  newNodeState1 = ( ( ( uint32_t ) modbusBuf[16] << 8 ) + modbusBuf[17] ) + ( ( ( uint32_t ) modbusBuf[18] << 24 ) + ( ( uint32_t ) modbusBuf[19]<<16 ) );
-    if ( newNodeState1 == lastNodeState1 ) //
+    //  newalarm_run_state = ( ( ( uint32_t ) modbusBuf[16] << 8 ) + modbusBuf[17] ) + ( ( ( uint32_t ) modbusBuf[18] << 24 ) + ( ( uint32_t ) modbusBuf[19]<<16 ) );
+    if ( newalarm_run_state == lastalarm_run_state ) //
     {
 
     }
@@ -912,25 +1023,25 @@ static int32_t parse_yx_data_and_packet_it ( uint8_t * modbusBuf, int devNo )
     {
         for ( i=0; i<16; i++ )
         {
-            newNodeState1Bit[i] = ( newNodeState1 >> i ) & 0x01;
-            if ( newNodeState1Bit[i] == lastNodeState1Bit[i] )
+            newalarm_run_stateBit[i] = ( newalarm_run_state >> i ) & 0x01;
+            if ( newalarm_run_stateBit[i] == lastalarm_run_stateBit[i] )
             {
 
             }
             else
             {
                 dataPointer[dataIndex].dataID = i+1 +64;
-                dataPointer[dataIndex].val    = newNodeState1Bit[i];
+                dataPointer[dataIndex].val    = newalarm_run_stateBit[i];
                 dataIndex++;
-                lastNodeState1Bit[i] = newNodeState1Bit[i];
+                lastalarm_run_stateBit[i] = newalarm_run_stateBit[i];
             }
         }
-        lastNodeState1 = newNodeState1;
+        lastalarm_run_state = newalarm_run_state;
     }
 
     //
-    //  newNodeState2 = ( ( ( uint32_t ) modbusBuf[20] << 8 ) + modbusBuf[21] ) + ( ( ( uint32_t ) modbusBuf[22] << 24 ) + ( ( uint32_t ) modbusBuf[23]<<16 ) );
-    if ( newNodeState2 == lastNodeState2 ) //
+    //  newalarm_run_state2 = ( ( ( uint32_t ) modbusBuf[20] << 8 ) + modbusBuf[21] ) + ( ( ( uint32_t ) modbusBuf[22] << 24 ) + ( ( uint32_t ) modbusBuf[23]<<16 ) );
+    if ( newalarm_run_state2 == lastalarm_run_state2 ) //
     {
 
     }
@@ -938,26 +1049,26 @@ static int32_t parse_yx_data_and_packet_it ( uint8_t * modbusBuf, int devNo )
     {
         for ( i=0; i<16; i++ )
         {
-            newNodeState2Bit[i] = ( newNodeState2 >> i ) & 0x01;
-            if ( newNodeState2Bit[i] == lastNodeState2Bit[i] )
+            newalarm_run_state2Bit[i] = ( newalarm_run_state2 >> i ) & 0x01;
+            if ( newalarm_run_state2Bit[i] == lastalarm_run_state2Bit[i] )
             {
 
             }
             else
             {
                 dataPointer[dataIndex].dataID = i+1+80;
-                dataPointer[dataIndex].val    = newNodeState2Bit[i];
+                dataPointer[dataIndex].val    = newalarm_run_state2Bit[i];
                 dataIndex++;
-                lastNodeState2Bit[i] = newNodeState2Bit[i];
+                lastalarm_run_state2Bit[i] = newalarm_run_state2Bit[i];
             }
         }
-        lastNodeState2 = newNodeState2;
+        lastalarm_run_state2 = newalarm_run_state2;
     }
 
     //
-    // newAlarm = ( ( ( uint32_t ) modbusBuf[82] << 8 ) + modbusBuf[83] ) + ( ( ( uint32_t ) modbusBuf[84] << 24 ) + ( ( uint32_t ) modbusBuf[85]<<16 ) );
+    // new_work_state = ( ( ( uint32_t ) modbusBuf[82] << 8 ) + modbusBuf[83] ) + ( ( ( uint32_t ) modbusBuf[84] << 24 ) + ( ( uint32_t ) modbusBuf[85]<<16 ) );
 
-    if ( newAlarm == lastAlarm )
+    if ( new_work_state == last_work_state )
     {
 
     }
@@ -966,26 +1077,26 @@ static int32_t parse_yx_data_and_packet_it ( uint8_t * modbusBuf, int devNo )
 
         for ( i=0; i<32; i++ )
         {
-            newAlarmBit[i] = ( newAlarm >> i ) & 0x01;
-            if ( newAlarmBit[i] == lastAlarmBit[i] )
+            new_work_stateBit[i] = ( new_work_state >> i ) & 0x01;
+            if ( new_work_stateBit[i] == last_work_stateBit[i] )
             {
 
             }
             else
             {
                 dataPointer[dataIndex].dataID = i+1+96;
-                dataPointer[dataIndex].val    = newAlarmBit[i];
+                dataPointer[dataIndex].val    = new_work_stateBit[i];
                 //WRITE_TO_LOG("alarm id = %d , val = %d\n", dataPointer[dataIndex].dataID , dataPointer[dataIndex].val );
                 dataIndex++;
-                lastAlarmBit[i] = newAlarmBit[i];
+                last_work_stateBit[i] = new_work_stateBit[i];
             }
         }
-        lastAlarm = newAlarm;
+        last_work_state = new_work_state;
     }
 
     //
-    // newRun = ( ( ( uint32_t ) modbusBuf[62] << 8 ) + modbusBuf[63] ) + ( ( ( uint32_t ) modbusBuf[64] << 24 ) + ( ( uint32_t ) modbusBuf[65]<<16 ) );
-    if ( newRun == lastRun )
+    // new_work_mode = ( ( ( uint32_t ) modbusBuf[62] << 8 ) + modbusBuf[63] ) + ( ( ( uint32_t ) modbusBuf[64] << 24 ) + ( ( uint32_t ) modbusBuf[65]<<16 ) );
+    if ( new_work_mode == last_work_mode )
     {
 
     }
@@ -993,8 +1104,8 @@ static int32_t parse_yx_data_and_packet_it ( uint8_t * modbusBuf, int devNo )
     {
         for ( i=0; i<16; i++ )
         {
-            newRunBit[i] = ( newRun >> i ) & 0x01;
-            if ( newRunBit[i] == lastRunBit[i] )
+            new_work_modeBit[i] = ( new_work_mode >> i ) & 0x01;
+            if ( new_work_modeBit[i] == last_work_modeBit[i] )
             {
 
             }
@@ -1002,15 +1113,15 @@ static int32_t parse_yx_data_and_packet_it ( uint8_t * modbusBuf, int devNo )
             {
 
                 dataPointer[dataIndex].dataID = i+1+128;
-                dataPointer[dataIndex].val    = newRunBit[i];
+                dataPointer[dataIndex].val    = new_work_modeBit[i];
                 dataIndex++;
-                lastRunBit[i] = newRunBit[i];
+                last_work_modeBit[i] = new_work_modeBit[i];
             }
         }
-        lastRun = newRun;
+        last_work_mode = new_work_mode;
     }
 
-    if ( newCharging == lastCharging )
+    if ( new_charging == last_charging )
     {
 
     }
@@ -1018,8 +1129,8 @@ static int32_t parse_yx_data_and_packet_it ( uint8_t * modbusBuf, int devNo )
     {
         for ( i=0; i<16; i++ )
         {
-            newChargingBit[i] = ( newCharging >> i ) & 0x01;
-            if ( newChargingBit[i] == lastChargingBit[i] )
+            new_chargingBit[i] = ( new_charging >> i ) & 0x01;
+            if ( new_chargingBit[i] == last_chargingBit[i] )
             {
 
             }
@@ -1027,12 +1138,38 @@ static int32_t parse_yx_data_and_packet_it ( uint8_t * modbusBuf, int devNo )
             {
 
                 dataPointer[dataIndex].dataID = i+1+144;
-                dataPointer[dataIndex].val    = newChargingBit[i];
+                dataPointer[dataIndex].val    = new_chargingBit[i];
                 dataIndex++;
-                lastRunBit[i] = newChargingBit[i];
+                last_work_modeBit[i] = new_chargingBit[i];
             }
         }
-        lastCharging = newCharging  ;
+        last_charging = new_charging  ;
+    }
+
+
+    if ( new_pcs_node == last_pcs_node )
+    {
+
+    }
+    else
+    {
+        for ( i=0; i<32; i++ )
+        {
+            new_pcs_nodeBit[i] = ( new_pcs_node >> i ) & 0x01;
+            if ( new_pcs_nodeBit[i] == last_pcs_nodeBit[i] )
+            {
+
+            }
+            else
+            {
+
+                dataPointer[dataIndex].dataID = i+1+193;
+                dataPointer[dataIndex].val    = new_pcs_nodeBit[i];
+                dataIndex++;
+                last_pcs_nodeBit[i] = new_pcs_nodeBit[i];
+            }
+        }
+        last_pcs_node = new_pcs_node  ;
     }
 
 
@@ -1164,8 +1301,9 @@ static int32_t get_yk_yt_data_from_modbus ( int32_t serialPortHandle,uint8_t dev
     return count;
 }
 
+
 /**/
-static int32_t parse_yt_data_and_packet_it ( const uint8_t * modbusBuf, uint32_t devNo )
+static int32_t parse_yt_data_and_packet_it_4x01 ( const uint8_t * modbusBuf, uint32_t devNo )
 {
     YT_FIFO_DATA_T* dataPointer = g_ytPacketSendByPipe.data;
     int32_t dataIndex = 0;
@@ -1184,7 +1322,7 @@ static int32_t parse_yt_data_and_packet_it ( const uint8_t * modbusBuf, uint32_t
 
     //3256  -3256
     modbusReg = ( ( ( uint16_t ) modbusBuf[0] << 8 ) + modbusBuf[1] );
-    if ( yt_data_is_changed ( devNo,modbusReg ,1 ) )
+    if ( yt_data_is_changed ( devNo,modbusReg ,0 ) )
     {
         dataPointer[dataIndex].dataID       = 3256;//power limit 0.1%
         dataPointer[dataIndex].val.value_32  = ( ( uint16_t ) modbusReg )  ;
@@ -1221,19 +1359,89 @@ static int32_t parse_yt_data_and_packet_it ( const uint8_t * modbusBuf, uint32_t
         dataPointer[dataIndex].val_type     = TYPE_UINT32;
         dataIndex++;
     }
-
-    //3300-3256
-    modbusReg = ( ( ( uint16_t ) modbusBuf[88] << 8 ) + modbusBuf[89] );
+    //3260
+    modbusReg = ( ( ( uint16_t ) modbusBuf[8] << 8 ) + modbusBuf[9] );
     if ( yt_data_is_changed ( devNo,modbusReg ,4 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3260;//power limit 0.1%
+        dataPointer[dataIndex].val.value_32  = ( ( uint16_t ) modbusReg )  ;
+        dataPointer[dataIndex].val_type     = TYPE_UINT32;
+        dataIndex++;
+    }
+
+    //3261
+    modbusReg = ( ( ( uint16_t ) modbusBuf[10] << 8 ) + modbusBuf[11] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,5 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3261;//power limit 0.1%
+        dataPointer[dataIndex].val.value_32  = ( ( uint16_t ) modbusReg )  ;
+        dataPointer[dataIndex].val_type     = TYPE_UINT32;
+        dataIndex++;
+    }
+
+    g_ytPacketSendByPipe.header.dataNum = dataIndex;
+    g_ytPacketSendByPipe.header.bodySize= g_ytPacketSendByPipe.header.dataNum *
+                                          sizeof ( YT_FIFO_DATA_T ); //data bytes
+
+    int totalSize = g_ytPacketSendByPipe.header.bodySize + sizeof ( FifoHeader );
+
+
+#if  DEBUG_OPEN
+
+    printf ( "\n-- get_yk_yt_data_and_send_to_pipe--\n" );
+
+    int32_t  send_id = 0;
+    for ( send_id  = 0  ; send_id < g_ytPacketSendByPipe.header.dataNum ; send_id ++ )
+    {
+
+        if ( g_ytPacketSendByPipe.data[ send_id ].val_type == TYPE_FLOAT32 )
+        {
+            printf ( "data_addr:%d  value_f: %f  \n",g_ytPacketSendByPipe.data[ send_id ].dataID,g_ytPacketSendByPipe.data[ send_id ].val.value_f );
+        }
+        else
+        {
+            printf ( "data_addr:%d  value_u: 0x%0x  \n",g_ytPacketSendByPipe.data[ send_id ].dataID,g_ytPacketSendByPipe.data[ send_id ].val.value_32 );
+        }
+
+    }
+    printf ( "\n" );
+
+#endif
+
+
+
+    return totalSize;
+}
+
+
+
+/**/
+static int32_t parse_yt_data_and_packet_it_4x02 ( const uint8_t * modbusBuf, uint32_t devNo )
+{
+    YT_FIFO_DATA_T* dataPointer = g_ytPacketSendByPipe.data;
+    int32_t dataIndex = 0;
+    uint16_t modbusReg = 0;
+
+    g_ytPacketSendByPipe.header.dataType[0] = 'y';
+    g_ytPacketSendByPipe.header.dataType[1] = 't';
+    g_ytPacketSendByPipe.header.dataType[2] = '\0';
+    g_ytPacketSendByPipe.header.devType = DEV_TYPE;//500K
+    g_ytPacketSendByPipe.header.devNo = devNo;
+    g_ytPacketSendByPipe.header.resv = 0;
+
+
+    //3300-3412
+    modbusReg = ( ( ( uint16_t ) modbusBuf[0] << 8 ) + modbusBuf[1] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,6 ) )
     {
         dataPointer[dataIndex].dataID       = 3300;//power limit 0.1%
         dataPointer[dataIndex].val.value_32  = ( ( uint16_t ) modbusReg )  ;
         dataPointer[dataIndex].val_type     = TYPE_UINT32;
         dataIndex++;
     }
-    //3301-3256
-    modbusReg = ( ( ( uint16_t ) modbusBuf[90] << 8 ) + modbusBuf[91] );
-    if ( yt_data_is_changed ( devNo,modbusReg ,5 ) )
+    //3301-3412
+    modbusReg = ( ( ( uint16_t ) modbusBuf[2] << 8 ) + modbusBuf[3] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,7 ) )
     {
         dataPointer[dataIndex].dataID       = 3301;//power limit 0.1%
         dataPointer[dataIndex].val.value_32  = ( ( int16_t ) modbusReg )  ;
@@ -1242,9 +1450,9 @@ static int32_t parse_yt_data_and_packet_it ( const uint8_t * modbusBuf, uint32_t
     }
 
 
-    //3302-3256
-    modbusReg = ( ( ( uint16_t ) modbusBuf[92] << 8 ) + modbusBuf[93] ) ;
-    if ( yt_data_is_changed ( devNo,modbusReg ,6 ) )
+    //3302-3412
+    modbusReg = ( ( ( uint16_t ) modbusBuf[4] << 8 ) + modbusBuf[5] ) ;
+    if ( yt_data_is_changed ( devNo,modbusReg ,8 ) )
     {
         dataPointer[dataIndex].dataID       = 3302;//power limit 0.1%
         dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /10;
@@ -1252,9 +1460,9 @@ static int32_t parse_yt_data_and_packet_it ( const uint8_t * modbusBuf, uint32_t
         dataIndex++;
     }
 
-    //3303-3256
-    modbusReg = ( ( ( uint16_t ) modbusBuf[94] << 8 ) + modbusBuf[95] );
-    if ( yt_data_is_changed ( devNo,modbusReg ,7 ) )
+    //3303--3412
+    modbusReg = ( ( ( uint16_t ) modbusBuf[6] << 8 ) + modbusBuf[7] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,9 ) )
     {
         dataPointer[dataIndex].dataID       = 3303;//power limit 0.1%
         dataPointer[dataIndex].val.value_32  = ( ( uint16_t ) modbusReg )  ;
@@ -1262,19 +1470,21 @@ static int32_t parse_yt_data_and_packet_it ( const uint8_t * modbusBuf, uint32_t
         dataIndex++;
     }
 
-    //3304-3256
-    modbusReg = ( ( ( uint16_t ) modbusBuf[96] << 8 ) + modbusBuf[97] );
-    if ( yt_data_is_changed ( devNo,modbusReg ,8 ) )
+#if 0
+    //3304--3412
+    modbusReg = ( ( ( uint16_t ) modbusBuf[8] << 8 ) + modbusBuf[9] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,10 ) )
     {
         dataPointer[dataIndex].dataID       = 3304;//power limit 0.1%
         dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /10;
         dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
         dataIndex++;
     }
+#endif
 
-    //3305-3256
-    modbusReg = ( ( ( uint16_t ) modbusBuf[98] << 8 ) + modbusBuf[99] );
-    if ( yt_data_is_changed ( devNo,modbusReg ,9 ) )
+    //3305--3412
+    modbusReg = ( ( ( uint16_t ) modbusBuf[10] << 8 ) + modbusBuf[11] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,11 ) )
     {
         dataPointer[dataIndex].dataID       = 3305;//power limit 0.1%
         dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /10;
@@ -1282,27 +1492,309 @@ static int32_t parse_yt_data_and_packet_it ( const uint8_t * modbusBuf, uint32_t
         dataIndex++;
     }
 
-
-    //3319-3256
-    modbusReg = ( ( ( uint16_t ) modbusBuf[126] << 8 ) + modbusBuf[127] );
-    if ( yt_data_is_changed ( devNo,modbusReg ,10 ) )
+    //3306--3412
+    modbusReg = ( ( ( uint16_t ) modbusBuf[12] << 8 ) + modbusBuf[13] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,12 ) )
     {
-        dataPointer[dataIndex].dataID       = 3319;//
+        dataPointer[dataIndex].dataID       = 3306;//power limit 0.1%
+        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /10;
+        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+        dataIndex++;
+    }
+
+    //3307-3412
+    modbusReg = ( ( ( uint16_t ) modbusBuf[14] << 8 ) + modbusBuf[15] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,13 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3307;//power limit 0.1%
+        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /100;
+        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+        dataIndex++;
+    }
+
+    //3310-3412
+    modbusReg = ( ( ( uint16_t ) modbusBuf[20] << 8 ) + modbusBuf[21] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,15 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3310;//power limit 0.1%
+        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /10;
+        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+        dataIndex++;
+    }
+
+    //3311-3412
+    modbusReg = ( ( ( uint16_t ) modbusBuf[22] << 8 ) + modbusBuf[23] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,16 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3311;//power limit 0.1%
         dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /10;
         dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
         dataIndex++;
     }
 
 
-    //3320-3256
-    modbusReg = ( ( ( uint16_t ) modbusBuf[128] << 8 ) + modbusBuf[129] );
-    if ( yt_data_is_changed ( devNo,modbusReg ,11 ) )
+    //3312
+    modbusReg = ( ( ( uint16_t ) modbusBuf[24] << 8 ) + modbusBuf[25] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,17 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3312;//power limit 0.1%
+        dataPointer[dataIndex].val.value_32  = ( ( uint16_t ) modbusReg )  ;
+        dataPointer[dataIndex].val_type     = TYPE_UINT32;
+        dataIndex++;
+    }
+
+    //3313
+    modbusReg = ( ( ( uint16_t ) modbusBuf[26] << 8 ) + modbusBuf[27] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,18 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3313;//power limit 0.1%
+        dataPointer[dataIndex].val.value_32  = ( ( uint16_t ) modbusReg )  ;
+        dataPointer[dataIndex].val_type     = TYPE_UINT32;
+        dataIndex++;
+    }
+    //3314
+    modbusReg = ( ( ( uint16_t ) modbusBuf[28] << 8 ) + modbusBuf[29] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,19 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3314;//power limit 0.1%
+        dataPointer[dataIndex].val.value_32  = ( ( uint16_t ) modbusReg )  ;
+        dataPointer[dataIndex].val_type     = TYPE_UINT32;
+        dataIndex++;
+    }
+
+
+
+    //3315
+    modbusReg = ( ( ( uint16_t ) modbusBuf[30] << 8 ) + modbusBuf[31] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,20 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3315;//power limit 0.1%
+        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /10;
+        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+        dataIndex++;
+    }
+
+    //3320
+    modbusReg = ( ( ( uint16_t ) modbusBuf[40] << 8 ) + modbusBuf[41] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,21 ) )
     {
         dataPointer[dataIndex].dataID       = 3320;//power limit 0.1%
         dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /1000;
         dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
         dataIndex++;
     }
+    //3330
+    modbusReg = ( ( ( uint16_t ) modbusBuf[60] << 8 ) + modbusBuf[61] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,22 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3330;//power limit 0.1%
+        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /10;
+        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+        dataIndex++;
+    }
+
+    //3331
+    modbusReg = ( ( ( uint16_t ) modbusBuf[62] << 8 ) + modbusBuf[63] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,23 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3331;//power limit 0.1%
+        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /100;
+        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+        dataIndex++;
+    }
+
+    //3332
+    modbusReg = ( ( ( uint16_t ) modbusBuf[64] << 8 ) + modbusBuf[65] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,24 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3332;//power limit 0.1%
+        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /10;
+        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+        dataIndex++;
+    }
+
+    //3333
+    modbusReg = ( ( ( uint16_t ) modbusBuf[66] << 8 ) + modbusBuf[67] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,25 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3333;//power limit 0.1%
+        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /10;
+        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+        dataIndex++;
+    }
+    //3334
+    modbusReg = ( ( ( uint16_t ) modbusBuf[68] << 8 ) + modbusBuf[69] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,26 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3334;//power limit 0.1%
+        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /10;
+        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+        dataIndex++;
+    }
+    //3335
+    modbusReg = ( ( ( uint16_t ) modbusBuf[70] << 8 ) + modbusBuf[71] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,27 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3335;//power limit 0.1%
+        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /10;
+        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+        dataIndex++;
+    }
+    //3387
+    modbusReg = ( ( ( uint16_t ) modbusBuf[174] << 8 ) + modbusBuf[175] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,28 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3387;//power limit 0.1%
+        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /10;
+        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+        dataIndex++;
+    }
+
+
+    //3388
+    modbusReg = ( ( ( uint16_t ) modbusBuf[176] << 8 ) + modbusBuf[177] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,29 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3388;//power limit 0.1%
+        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /10;
+        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+        dataIndex++;
+    }
+    //3390
+    modbusReg = ( ( ( uint16_t ) modbusBuf[180] << 8 ) + modbusBuf[181] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,30 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3390;//power limit 0.1%
+        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /10;
+        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+        dataIndex++;
+    }
+    //3391
+    modbusReg = ( ( ( uint16_t ) modbusBuf[182] << 8 ) + modbusBuf[183] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,31 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3391;//power limit 0.1%
+        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /10;
+        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+        dataIndex++;
+    }
+    //3392
+    modbusReg = ( ( ( uint16_t ) modbusBuf[184] << 8 ) + modbusBuf[185] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,32 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3392;//power limit 0.1%
+        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /10;
+        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+        dataIndex++;
+    }
+    //3393
+    modbusReg = ( ( ( uint16_t ) modbusBuf[186] << 8 ) + modbusBuf[187] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,33 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3393;//power limit 0.1%
+        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /10;
+        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+        dataIndex++;
+    }
+    //3394
+    modbusReg = ( ( ( uint16_t ) modbusBuf[188] << 8 ) + modbusBuf[189] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,34 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3394;//power limit 0.1%
+        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /10;
+        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+        dataIndex++;
+    }
+    //3395
+    modbusReg = ( ( ( uint16_t ) modbusBuf[190] << 8 ) + modbusBuf[191] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,35 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3395;//power limit 0.1%
+        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /10;
+        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+        dataIndex++;
+    }
+
+
+    //3396
+    modbusReg = ( ( ( uint16_t ) modbusBuf[192] << 8 ) + modbusBuf[193] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,36 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3396;//power limit 0.1%
+        dataPointer[dataIndex].val.value_32  = ( ( uint16_t ) modbusReg )  ;
+        dataPointer[dataIndex].val_type     = TYPE_UINT32;
+        dataIndex++;
+    }
+    //3397
+    modbusReg = ( ( ( uint16_t ) modbusBuf[194] << 8 ) + modbusBuf[195] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,37 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3397;//power limit 0.1%
+        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /10;
+        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+        dataIndex++;
+    }
+
+    //3398
+    modbusReg = ( ( ( uint16_t ) modbusBuf[196] << 8 ) + modbusBuf[197] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,38 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3398;//power limit 0.1%
+        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /1000;
+        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+        dataIndex++;
+    }
+    //3399
+    modbusReg = ( ( ( uint16_t ) modbusBuf[198] << 8 ) + modbusBuf[199] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,39 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3399;//power limit 0.1%
+        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /10;
+        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+        dataIndex++;
+    }
+
+
+    //3404
+    modbusReg = ( ( ( uint16_t ) modbusBuf[208] << 8 ) + modbusBuf[209] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,40 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3404;//power limit 0.1%
+        dataPointer[dataIndex].val.value_32  = ( ( uint16_t ) modbusReg )  ;
+        dataPointer[dataIndex].val_type     = TYPE_UINT32;
+        dataIndex++;
+    }
+
+    //3405
+    modbusReg = ( ( ( uint16_t ) modbusBuf[210] << 8 ) + modbusBuf[211] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,41 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3405;//power limit 0.1%
+        dataPointer[dataIndex].val.value_32  = ( ( uint16_t ) modbusReg )  ;
+        dataPointer[dataIndex].val_type     = TYPE_UINT32;
+        dataIndex++;
+    }
+
+    //3411
+    modbusReg = ( ( ( uint16_t ) modbusBuf[212] << 8 ) + modbusBuf[213] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,42 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3411;//power limit 0.1%
+        dataPointer[dataIndex].val.value_32  = ( ( uint16_t ) modbusReg )  ;
+        dataPointer[dataIndex].val_type     = TYPE_UINT32;
+        dataIndex++;
+    }
+
+    //3412
+    modbusReg = ( ( ( uint16_t ) modbusBuf[214] << 8 ) + modbusBuf[215] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,43 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3412;//power limit 0.1%
+        dataPointer[dataIndex].val.value_32  = ( ( uint16_t ) modbusReg )  ;
+        dataPointer[dataIndex].val_type     = TYPE_UINT32;
+        dataIndex++;
+    }
+
 
 
     g_ytPacketSendByPipe.header.dataNum = dataIndex;
@@ -1452,7 +1944,7 @@ static int32_t get_yk_yt_data_and_send_to_pipe ( uint8_t devNo,
             break;  //
         }
 
-        bytesToWrite = parse_yt_data_and_packet_it ( &g_serialPortReadBuf[3],devNo );
+        bytesToWrite = parse_yt_data_and_packet_it_4x01 ( &g_serialPortReadBuf[3],devNo );
         if ( bytesToWrite <= sizeof ( FifoHeader ) )
         {
             //
@@ -1499,7 +1991,7 @@ static int32_t get_yk_yt_data_and_send_to_pipe ( uint8_t devNo,
 
 
 
-#if 0
+#if 1
     memset ( g_serialPortReadBuf ,0, sizeof ( g_serialPortReadBuf ) );
     ret = get_yk_yt_data_from_modbus ( serialPortHandle,devNo,cmd_4x_02 );
 
@@ -1510,7 +2002,7 @@ static int32_t get_yk_yt_data_and_send_to_pipe ( uint8_t devNo,
             break;  //
         }
 
-        bytesToWrite = parse_yt_data_and_packet_it ( &g_serialPortReadBuf[3],devNo );
+        bytesToWrite = parse_yt_data_and_packet_it_4x02 ( &g_serialPortReadBuf[3],devNo );
         if ( bytesToWrite <= sizeof ( FifoHeader ) )
         {
             //
@@ -1551,7 +2043,7 @@ static int32_t get_yk_yt_data_and_send_to_pipe ( uint8_t devNo,
 }
 
 
-#if 0
+#if 1
 //遥控 屏蔽
 /* modbus*/
 static int32_t deal_with_yk_info ( int serialPortHandle, const FifoHeader* headerInfo, const YK_FIFO_DATA_T* p_YkDataReadFromPipe )
@@ -1560,7 +2052,7 @@ static int32_t deal_with_yk_info ( int serialPortHandle, const FifoHeader* heade
 
     SHOW_DEBUG_INFO ( "'YK' value is %d @ dev(%d).\n", p_YkDataReadFromPipe->val,headerInfo->devNo );
 
-    if ( 5006 != p_YkDataReadFromPipe->dataID )
+    if ( 3256 != p_YkDataReadFromPipe->dataID )
     {
         WRITE_TO_LOG ( "ERROR: 'YK' dataID(%04d != 5006) is WRONG @ dev(%d) @ %s.\n",
                        p_YkDataReadFromPipe->dataID, headerInfo->devNo, get_current_time_str() );
@@ -1693,122 +2185,221 @@ static int32_t deal_with_yt_info ( int32_t serialPortHandle,
                        p_YtDataReadFromPipe->val_type, get_current_time_str() );
     }
 
-#if 0
-    if ( 5008 == dataID ) //
-    {
-        value = ( int16_t ) ( ( float ) p_YtDataReadFromPipe->val.value_f * 10 );
-        set_a_value_to_modbus ( serialPortHandle , 5008,  value, devNo );
-    }
-    else if ( 5019 == dataID ) //power factor 0.001
-    {
-        value = ( int16_t ) ( ( float ) p_YtDataReadFromPipe->val.value_f * 1000 );
-        set_a_value_to_modbus ( serialPortHandle , 5019,  value, devNo );
-    }
-    else if ( 5034 == dataID ) //
-    {
-        value = p_YtDataReadFromPipe->val.value_f ;
-        set_a_value_to_modbus ( serialPortHandle , 5034,  value, devNo );
-    }
-    else if ( 5036 == dataID )
-    {
-        value = p_YtDataReadFromPipe->val.value_f ;
-        set_a_value_to_modbus ( serialPortHandle , 5036,  value, devNo );
-    }
-    else if ( 5037 == dataID ) //0.1%
-    {
-        value = ( int16_t ) ( ( float ) p_YtDataReadFromPipe->val.value_f * 10 );
-        set_a_value_to_modbus ( serialPortHandle , 5037,  value, devNo );
-    }
-    else if ( 5039 == dataID ) // 0.1
-    {
-        value = ( int16_t ) ( ( float ) p_YtDataReadFromPipe->val.value_f * 10 );
-        set_a_value_to_modbus ( serialPortHandle , 5039,  value, devNo );
-    }
-    else if ( 5040 == dataID ) // 0.1
-    {
-        value = ( int16_t ) ( ( float ) p_YtDataReadFromPipe->val.value_f * 10 );
-        set_a_value_to_modbus ( serialPortHandle , 5040,  value, devNo );
-    }
-    else if ( 5041 == dataID ) //
-    {
-        value = ( int16_t ) ( ( float ) p_YtDataReadFromPipe->val.value_f * 100 );
-        set_a_value_to_modbus ( serialPortHandle , 5041,  value, devNo );
-    }
-    else if ( 5042 == dataID ) //
-    {
-        value = ( int16_t ) ( ( float ) p_YtDataReadFromPipe->val.value_f * 100 );
-        set_a_value_to_modbus ( serialPortHandle , 5042,  value, devNo );
-    }
-    else if ( 5048 == dataID ) //
-    {
-        value = ( int16_t ) ( ( float ) p_YtDataReadFromPipe->val.value_f * 1 );
-        set_a_value_to_modbus ( serialPortHandle , 5048,  value, devNo );
-    }
-    else if ( 5049 == dataID ) //
-    {
-        value = ( int16_t ) ( ( float ) p_YtDataReadFromPipe->val.value_f * 10 );
-        set_a_value_to_modbus ( serialPortHandle , 5049,  value, devNo );
-    }
-#endif
-    if ( 3256 == dataID ) //
+    if ( 3256 == dataID ) //开关机
     {
         value = ( int16_t ) ( p_YtDataReadFromPipe->val.value_32 );
         set_a_value_to_modbus ( serialPortHandle , 3256,  value, devNo );
     }
-    else   if ( 3257 == dataID ) //
+    else   if ( 3257 == dataID ) //并离网模式设置
     {
         value = ( int16_t ) ( p_YtDataReadFromPipe->val.value_32 );
         set_a_value_to_modbus ( serialPortHandle , 3257,  value, devNo );
     }
-    else   if ( 3258 == dataID ) //
+    else   if ( 3258 == dataID ) //无功调节选择开关
     {
         value = ( int16_t ) ( p_YtDataReadFromPipe->val.value_32 );
         set_a_value_to_modbus ( serialPortHandle , 3258,  value, devNo );
     }
-    else   if ( 3259 == dataID ) //
+    else   if ( 3259 == dataID ) //远程/本地
     {
         value = ( int16_t ) ( p_YtDataReadFromPipe->val.value_32 );
         set_a_value_to_modbus ( serialPortHandle , 3259,  value, devNo );
     }
-    else   if ( 3300 == dataID ) //
+    else   if ( 3260 == dataID ) //有功/无功优先
+    {
+        value = ( int16_t ) ( p_YtDataReadFromPipe->val.value_32 );
+        set_a_value_to_modbus ( serialPortHandle , 3260,  value, devNo );
+    }
+    else   if ( 3261 == dataID ) //功率缓启使能选择
+    {
+        value = ( int16_t ) ( p_YtDataReadFromPipe->val.value_32 );
+        set_a_value_to_modbus ( serialPortHandle , 3261,  value, devNo );
+    }
+
+    else   if ( 3300 == dataID ) //并网充放电模式
     {
         value = ( int16_t ) ( p_YtDataReadFromPipe->val.value_32 );
         set_a_value_to_modbus ( serialPortHandle , 3300,  value, devNo );
     }
-    else   if ( 3301 == dataID ) //
+    else   if ( 3301 == dataID ) //并网恒流电流值
     {
         value = ( int16_t ) ( p_YtDataReadFromPipe->val.value_32 );
         set_a_value_to_modbus ( serialPortHandle , 3300,  value, devNo );
     }
-    else   if ( 3302 == dataID ) //
+    else   if ( 3302 == dataID ) //并网恒压电压值
     {
         value = ( int16_t ) ( ( float ) p_YtDataReadFromPipe->val.value_f * 10 );
         set_a_value_to_modbus ( serialPortHandle , 3302,  value, devNo );
     }
-    else   if ( 3303 == dataID ) //
+    else   if ( 3303 == dataID ) //并网恒压限制电流值
     {
         value = ( int16_t ) ( p_YtDataReadFromPipe->val.value_32 );
         set_a_value_to_modbus ( serialPortHandle , 3303,  value, devNo );
     }
-    else   if ( 3304 == dataID ) //
-    {
-        value = ( int16_t ) ( ( float ) p_YtDataReadFromPipe->val.value_f * 10 );
-        set_a_value_to_modbus ( serialPortHandle , 3304,  value, devNo );
-    }
-    else   if ( 3305 == dataID ) //
+    else   if ( 3305 == dataID ) //并网恒功率值(DC)
     {
         value = ( int16_t ) ( ( float ) p_YtDataReadFromPipe->val.value_f * 10 );
         set_a_value_to_modbus ( serialPortHandle , 3305,  value, devNo );
     }
-    else   if ( 3319 == dataID ) //
+    else   if ( 3306 == dataID ) //并网恒功率值(DC)
     {
         value = ( int16_t ) ( ( float ) p_YtDataReadFromPipe->val.value_f * 10 );
-        set_a_value_to_modbus ( serialPortHandle , 3319,  value, devNo );
+        set_a_value_to_modbus ( serialPortHandle , 3306,  value, devNo );
+    }
+    else   if ( 3307 == dataID ) //并网恒功率值(DC)
+    {
+        value = ( int16_t ) ( ( float ) p_YtDataReadFromPipe->val.value_f * 100 );
+        set_a_value_to_modbus ( serialPortHandle , 3307,  value, devNo );
+    }
+    else   if ( 3310 == dataID ) //并网恒功率值(DC)
+    {
+        value = ( int16_t ) ( ( float ) p_YtDataReadFromPipe->val.value_f * 10 );
+        set_a_value_to_modbus ( serialPortHandle , 3310,  value, devNo );
+    }
+    else   if ( 3311 == dataID ) //并网恒功率值(DC)
+    {
+        value = ( int16_t ) ( ( float ) p_YtDataReadFromPipe->val.value_f * 10 );
+        set_a_value_to_modbus ( serialPortHandle , 3311,  value, devNo );
+    }
+    else   if ( 3312 == dataID ) //并网充放电模式
+    {
+        value = ( int16_t ) ( p_YtDataReadFromPipe->val.value_32 );
+        set_a_value_to_modbus ( serialPortHandle , 3312,  value, devNo );
+    }
+    else   if ( 3313 == dataID ) //并网充放电模式
+    {
+        value = ( int16_t ) ( p_YtDataReadFromPipe->val.value_32 );
+        set_a_value_to_modbus ( serialPortHandle , 3313,  value, devNo );
+    }
+    else   if ( 3314 == dataID ) //并网充放电模式
+    {
+        value = ( int16_t ) ( p_YtDataReadFromPipe->val.value_32 );
+        set_a_value_to_modbus ( serialPortHandle , 3314,  value, devNo );
+    }
+    else   if ( 3315 == dataID ) //并网恒功率值(DC)
+    {
+        value = ( int16_t ) ( ( float ) p_YtDataReadFromPipe->val.value_f * 10 );
+        set_a_value_to_modbus ( serialPortHandle , 3315,  value, devNo );
+    }
+    else   if ( 3315 == dataID ) //并网恒功率值(DC)
+    {
+        value = ( int16_t ) ( ( float ) p_YtDataReadFromPipe->val.value_f * 10 );
+        set_a_value_to_modbus ( serialPortHandle , 3315,  value, devNo );
     }
     else   if ( 3320 == dataID ) //
     {
         value = ( int16_t ) ( ( float ) p_YtDataReadFromPipe->val.value_f * 1000 );
         set_a_value_to_modbus ( serialPortHandle , 3320,  value, devNo );
+    }
+    else   if ( 3330 == dataID ) //
+    {
+        value = ( int16_t ) ( ( float ) p_YtDataReadFromPipe->val.value_f * 10 );
+        set_a_value_to_modbus ( serialPortHandle , 3330,  value, devNo );
+    }
+    else   if ( 3331 == dataID ) //
+    {
+        value = ( int16_t ) ( ( float ) p_YtDataReadFromPipe->val.value_f * 100 );
+        set_a_value_to_modbus ( serialPortHandle , 3331,  value, devNo );
+    }
+    else   if ( 3332 == dataID ) //
+    {
+        value = ( int16_t ) ( ( float ) p_YtDataReadFromPipe->val.value_f * 10 );
+        set_a_value_to_modbus ( serialPortHandle , 3332,  value, devNo );
+    }
+    else   if ( 3333 == dataID ) //
+    {
+        value = ( int16_t ) ( ( float ) p_YtDataReadFromPipe->val.value_f * 10 );
+        set_a_value_to_modbus ( serialPortHandle , 3333,  value, devNo );
+    }
+    else   if ( 3334 == dataID ) //
+    {
+        value = ( int16_t ) ( ( float ) p_YtDataReadFromPipe->val.value_f * 10 );
+        set_a_value_to_modbus ( serialPortHandle , 3334,  value, devNo );
+    }
+    else   if ( 3335 == dataID ) //
+    {
+        value = ( int16_t ) ( ( float ) p_YtDataReadFromPipe->val.value_f * 10 );
+        set_a_value_to_modbus ( serialPortHandle , 3335,  value, devNo );
+    }
+    else   if ( 3387 == dataID ) //
+    {
+        value = ( int16_t ) ( ( float ) p_YtDataReadFromPipe->val.value_f * 10 );
+        set_a_value_to_modbus ( serialPortHandle , 3387,  value, devNo );
+    }
+    else   if ( 3388 == dataID ) //
+    {
+        value = ( int16_t ) ( ( float ) p_YtDataReadFromPipe->val.value_f * 10 );
+        set_a_value_to_modbus ( serialPortHandle , 3388,  value, devNo );
+    }
+    else   if ( 3390 == dataID ) //
+    {
+        value = ( int16_t ) ( ( float ) p_YtDataReadFromPipe->val.value_f * 10 );
+        set_a_value_to_modbus ( serialPortHandle , 3390,  value, devNo );
+    }
+    else   if ( 3391== dataID )  //
+    {
+        value = ( int16_t ) ( ( float ) p_YtDataReadFromPipe->val.value_f * 10 );
+        set_a_value_to_modbus ( serialPortHandle , 3391,  value, devNo );
+    }
+    else   if ( 3392 == dataID ) //
+    {
+        value = ( int16_t ) ( ( float ) p_YtDataReadFromPipe->val.value_f * 10 );
+        set_a_value_to_modbus ( serialPortHandle , 3392,  value, devNo );
+    }
+    else   if ( 3393 == dataID ) //
+    {
+        value = ( int16_t ) ( ( float ) p_YtDataReadFromPipe->val.value_f * 10 );
+        set_a_value_to_modbus ( serialPortHandle , 3393,  value, devNo );
+    }
+    else   if ( 3394 == dataID ) //
+    {
+        value = ( int16_t ) ( ( float ) p_YtDataReadFromPipe->val.value_f * 10 );
+        set_a_value_to_modbus ( serialPortHandle , 3394,  value, devNo );
+    }
+    else   if ( 3395 == dataID ) //
+    {
+        value = ( int16_t ) ( ( float ) p_YtDataReadFromPipe->val.value_f * 10 );
+        set_a_value_to_modbus ( serialPortHandle , 3395,  value, devNo );
+    }
+    else   if ( 3396 == dataID ) //并网充放电模式
+    {
+        value = ( int16_t ) ( p_YtDataReadFromPipe->val.value_32 );
+        set_a_value_to_modbus ( serialPortHandle , 3396,  value, devNo );
+    }
+    else   if ( 3397 == dataID ) //
+    {
+        value = ( int16_t ) ( ( float ) p_YtDataReadFromPipe->val.value_f * 10 );
+        set_a_value_to_modbus ( serialPortHandle , 3397,  value, devNo );
+    }
+    else   if ( 3398 == dataID ) //
+    {
+        value = ( int16_t ) ( ( float ) p_YtDataReadFromPipe->val.value_f * 10 );
+        set_a_value_to_modbus ( serialPortHandle , 3398,  value, devNo );
+    }
+    else   if ( 3399 == dataID ) //
+    {
+        value = ( int16_t ) ( ( float ) p_YtDataReadFromPipe->val.value_f * 10 );
+        set_a_value_to_modbus ( serialPortHandle , 3399,  value, devNo );
+    }
+    else   if ( 3404 == dataID ) //并网充放电模式
+    {
+        value = ( int16_t ) ( p_YtDataReadFromPipe->val.value_32 );
+        set_a_value_to_modbus ( serialPortHandle , 3404,  value, devNo );
+    }
+    else   if ( 3405 == dataID ) //并网充放电模式
+    {
+        value = ( int16_t ) ( p_YtDataReadFromPipe->val.value_32 );
+        set_a_value_to_modbus ( serialPortHandle , 3405,  value, devNo );
+    }
+    else   if ( 3411 == dataID ) //并网充放电模式
+    {
+        value = ( int16_t ) ( p_YtDataReadFromPipe->val.value_32 );
+        set_a_value_to_modbus ( serialPortHandle , 3411,  value, devNo );
+    }
+    else   if ( 3412 == dataID ) //并网充放电模式
+    {
+        value = ( int16_t ) ( p_YtDataReadFromPipe->val.value_32 );
+        set_a_value_to_modbus ( serialPortHandle , 3412,  value, devNo );
     }
     else
     {
@@ -1846,7 +2437,7 @@ static int32_t get_yk_yt_data_and_send_to_modbus ( int32_t toModbusPipeHandle,
 
                 if ( 0 == strcmp ( &CurrentHeaderFromPipe.dataType[0],"yk" ) )
                 {
-                    //  deal_with_yk_info ( serialPortHandle, &CurrentHeaderFromPipe, ( YK_FIFO_DATA_T* ) g_pipeReadBuf );
+                    deal_with_yk_info ( serialPortHandle, &CurrentHeaderFromPipe, ( YK_FIFO_DATA_T* ) g_pipeReadBuf );
                 }
                 else if ( 0 == strcmp ( &CurrentHeaderFromPipe.dataType[0],"yt" ) )
                 {
@@ -1976,20 +2567,16 @@ int32_t main ( int argc, char* argv[] )
 //打印程序版本号
     DEBUG_TIME_OUTPUT ( "\n -- init-- soft_ver:%s \n", soft_ver );
 
-    if ( argc > 2 )
+    if ( ( argc > 2 ) || ( argc < 2 ) )
     {
-        printf ( "Too many arguments!\n" );
-        return 0;
-    }
-    else if ( argc < 2 )
-    {
-        printf ( "Too few arguments!\n" );
-        return 0;
+        printf ( " argc %d arguments  error right 2 !\n" ,argc );
+        return -1;
     }
     else
     {
         if ( 0 == chdir ( argv[1] ) )
         {
+            printf ( " change the work directory %s \n",argv[1] );
         }
         else
         {
@@ -2011,7 +2598,8 @@ int32_t main ( int argc, char* argv[] )
         exit ( EXIT_FAILURE );
     }
 
-    int32_t serialPortHandle = open_and_set_a_serial_port ( "/dev/ttyO4" ); //ttyS1 ttyUSB0
+
+    int32_t serialPortHandle = open_and_set_a_serial_port ( "/dev/ttyO1" );
 
     const char* toModbusPipeName = "/tmp/fifo_ctrl"; //fifo_ctrl ykYtPipe
     int32_t toModbusPipeHandle = get_a_to_modbus_pipe_at_read_mode ( toModbusPipeName );
