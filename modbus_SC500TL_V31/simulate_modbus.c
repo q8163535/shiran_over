@@ -793,7 +793,7 @@ uint16_t cmd_4x_01_len =  65;
 
 
 //---------------------------------------------------------------------------------------------------------------------------- 3330~3412 83
-uint8_t cmd_4x_02[ ] = { 0x01, 0x03, 0x0d, 0x02, 0x00, 0x53, 0xA6 ,0x9B};
+uint8_t cmd_4x_02[ ] = { 0x01, 0x03, 0x0d, 0x01, 0x00, 0x53, 0x56 ,0x9B};
 uint16_t cmd_4x_02_len =  83;
 
 
@@ -1379,6 +1379,149 @@ static int32_t parse_yt_data_and_packet_it_4x01 ( const uint8_t * modbusBuf, uin
         dataIndex++;
     }
 
+    //3300
+    modbusReg = ( ( ( uint16_t ) modbusBuf[88] << 8 ) + modbusBuf[89] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,6 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3300;//power limit 0.1%
+        dataPointer[dataIndex].val.value_32  = ( ( uint16_t ) modbusReg )  ;
+        dataPointer[dataIndex].val_type     = TYPE_UINT32;
+        dataIndex++;
+    }
+    //3301-3412
+    modbusReg = ( ( ( uint16_t ) modbusBuf[90] << 8 ) + modbusBuf[91] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,7 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3301;//power limit 0.1%
+        dataPointer[dataIndex].val.value_32  = ( ( int16_t ) modbusReg )  ;
+        dataPointer[dataIndex].val_type     = TYPE_UINT32;
+        dataIndex++;
+    }
+
+
+    //3302-3412
+    modbusReg = ( ( ( uint16_t ) modbusBuf[92] << 8 ) + modbusBuf[93] ) ;
+    if ( yt_data_is_changed ( devNo,modbusReg ,8 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3302;//power limit 0.1%
+        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /10;
+        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+        dataIndex++;
+    }
+
+    //3303--3412
+    modbusReg = ( ( ( uint16_t ) modbusBuf[94] << 8 ) + modbusBuf[95] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,9 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3303;//power limit 0.1%
+        dataPointer[dataIndex].val.value_32  = ( ( uint16_t ) modbusReg )  ;
+        dataPointer[dataIndex].val_type     = TYPE_UINT32;
+        dataIndex++;
+    }
+
+
+    //3305--3412
+    modbusReg = ( ( ( uint16_t ) modbusBuf[98] << 8 ) + modbusBuf[99] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,11 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3305;//power limit 0.1%
+        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /10;
+        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+        dataIndex++;
+    }
+
+    //3306--3412
+    modbusReg = ( ( ( uint16_t ) modbusBuf[100] << 8 ) + modbusBuf[101] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,12 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3306;//power limit 0.1%
+        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /10;
+        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+        dataIndex++;
+    }
+
+    //3307-3412
+    modbusReg = ( ( ( uint16_t ) modbusBuf[102] << 8 ) + modbusBuf[103] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,13 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3307;//power limit 0.1%
+        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /100;
+        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+        dataIndex++;
+    }
+
+    //3310-3412
+    modbusReg = ( ( ( uint16_t ) modbusBuf[108] << 8 ) + modbusBuf[109] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,15 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3310;//power limit 0.1%
+        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /10;
+        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+        dataIndex++;
+    }
+
+    //3311-3412
+    modbusReg = ( ( ( uint16_t ) modbusBuf[110] << 8 ) + modbusBuf[111] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,16 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3311;//power limit 0.1%
+        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /10;
+        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+        dataIndex++;
+    }
+
+
+    //3312
+    modbusReg = ( ( ( uint16_t ) modbusBuf[112] << 8 ) + modbusBuf[113] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,17 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3312;//power limit 0.1%
+        dataPointer[dataIndex].val.value_32  = ( ( uint16_t ) modbusReg )  ;
+        dataPointer[dataIndex].val_type     = TYPE_UINT32;
+        dataIndex++;
+    }
+
+    //3313
+    modbusReg = ( ( ( uint16_t ) modbusBuf[114] << 8 ) + modbusBuf[115] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,18 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3313;//power limit 0.1%
+        dataPointer[dataIndex].val.value_32  = ( ( uint16_t ) modbusReg )  ;
+        dataPointer[dataIndex].val_type     = TYPE_UINT32;
+        dataIndex++;
+    }
+    //3314
+    modbusReg = ( ( ( uint16_t ) modbusBuf[116] << 8 ) + modbusBuf[117] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,19 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3314;//power limit 0.1%
+        dataPointer[dataIndex].val.value_32  = ( ( uint16_t ) modbusReg )  ;
+        dataPointer[dataIndex].val_type     = TYPE_UINT32;
+        dataIndex++;
+    }
+
+
+
+    //3315
+    modbusReg = ( ( ( uint16_t ) modbusBuf[118] << 8 ) + modbusBuf[119] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,20 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3315;//power limit 0.1%
+        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /10;
+        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+        dataIndex++;
+    }
+
+    //3320
+    modbusReg = ( ( ( uint16_t ) modbusBuf[128] << 8 ) + modbusBuf[129] );
+    if ( yt_data_is_changed ( devNo,modbusReg ,21 ) )
+    {
+        dataPointer[dataIndex].dataID       = 3320;//power limit 0.1%
+        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /1000;
+        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
+        dataIndex++;
+    }
+
     g_ytPacketSendByPipe.header.dataNum = dataIndex;
     g_ytPacketSendByPipe.header.bodySize= g_ytPacketSendByPipe.header.dataNum *
                                           sizeof ( YT_FIFO_DATA_T ); //data bytes
@@ -1431,160 +1574,9 @@ static int32_t parse_yt_data_and_packet_it_4x02 ( const uint8_t * modbusBuf, uin
 
 
     //3300-3412
-    modbusReg = ( ( ( uint16_t ) modbusBuf[0] << 8 ) + modbusBuf[1] );
-    if ( yt_data_is_changed ( devNo,modbusReg ,6 ) )
-    {
-        dataPointer[dataIndex].dataID       = 3300;//power limit 0.1%
-        dataPointer[dataIndex].val.value_32  = ( ( uint16_t ) modbusReg )  ;
-        dataPointer[dataIndex].val_type     = TYPE_UINT32;
-        dataIndex++;
-    }
-    //3301-3412
-    modbusReg = ( ( ( uint16_t ) modbusBuf[2] << 8 ) + modbusBuf[3] );
-    if ( yt_data_is_changed ( devNo,modbusReg ,7 ) )
-    {
-        dataPointer[dataIndex].dataID       = 3301;//power limit 0.1%
-        dataPointer[dataIndex].val.value_32  = ( ( int16_t ) modbusReg )  ;
-        dataPointer[dataIndex].val_type     = TYPE_UINT32;
-        dataIndex++;
-    }
 
-
-    //3302-3412
-    modbusReg = ( ( ( uint16_t ) modbusBuf[4] << 8 ) + modbusBuf[5] ) ;
-    if ( yt_data_is_changed ( devNo,modbusReg ,8 ) )
-    {
-        dataPointer[dataIndex].dataID       = 3302;//power limit 0.1%
-        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /10;
-        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
-        dataIndex++;
-    }
-
-    //3303--3412
-    modbusReg = ( ( ( uint16_t ) modbusBuf[6] << 8 ) + modbusBuf[7] );
-    if ( yt_data_is_changed ( devNo,modbusReg ,9 ) )
-    {
-        dataPointer[dataIndex].dataID       = 3303;//power limit 0.1%
-        dataPointer[dataIndex].val.value_32  = ( ( uint16_t ) modbusReg )  ;
-        dataPointer[dataIndex].val_type     = TYPE_UINT32;
-        dataIndex++;
-    }
-
-#if 0
-    //3304--3412
-    modbusReg = ( ( ( uint16_t ) modbusBuf[8] << 8 ) + modbusBuf[9] );
-    if ( yt_data_is_changed ( devNo,modbusReg ,10 ) )
-    {
-        dataPointer[dataIndex].dataID       = 3304;//power limit 0.1%
-        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /10;
-        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
-        dataIndex++;
-    }
-#endif
-
-    //3305--3412
-    modbusReg = ( ( ( uint16_t ) modbusBuf[10] << 8 ) + modbusBuf[11] );
-    if ( yt_data_is_changed ( devNo,modbusReg ,11 ) )
-    {
-        dataPointer[dataIndex].dataID       = 3305;//power limit 0.1%
-        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /10;
-        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
-        dataIndex++;
-    }
-
-    //3306--3412
-    modbusReg = ( ( ( uint16_t ) modbusBuf[12] << 8 ) + modbusBuf[13] );
-    if ( yt_data_is_changed ( devNo,modbusReg ,12 ) )
-    {
-        dataPointer[dataIndex].dataID       = 3306;//power limit 0.1%
-        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /10;
-        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
-        dataIndex++;
-    }
-
-    //3307-3412
-    modbusReg = ( ( ( uint16_t ) modbusBuf[14] << 8 ) + modbusBuf[15] );
-    if ( yt_data_is_changed ( devNo,modbusReg ,13 ) )
-    {
-        dataPointer[dataIndex].dataID       = 3307;//power limit 0.1%
-        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /100;
-        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
-        dataIndex++;
-    }
-
-    //3310-3412
-    modbusReg = ( ( ( uint16_t ) modbusBuf[20] << 8 ) + modbusBuf[21] );
-    if ( yt_data_is_changed ( devNo,modbusReg ,15 ) )
-    {
-        dataPointer[dataIndex].dataID       = 3310;//power limit 0.1%
-        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /10;
-        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
-        dataIndex++;
-    }
-
-    //3311-3412
-    modbusReg = ( ( ( uint16_t ) modbusBuf[22] << 8 ) + modbusBuf[23] );
-    if ( yt_data_is_changed ( devNo,modbusReg ,16 ) )
-    {
-        dataPointer[dataIndex].dataID       = 3311;//power limit 0.1%
-        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /10;
-        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
-        dataIndex++;
-    }
-
-
-    //3312
-    modbusReg = ( ( ( uint16_t ) modbusBuf[24] << 8 ) + modbusBuf[25] );
-    if ( yt_data_is_changed ( devNo,modbusReg ,17 ) )
-    {
-        dataPointer[dataIndex].dataID       = 3312;//power limit 0.1%
-        dataPointer[dataIndex].val.value_32  = ( ( uint16_t ) modbusReg )  ;
-        dataPointer[dataIndex].val_type     = TYPE_UINT32;
-        dataIndex++;
-    }
-
-    //3313
-    modbusReg = ( ( ( uint16_t ) modbusBuf[26] << 8 ) + modbusBuf[27] );
-    if ( yt_data_is_changed ( devNo,modbusReg ,18 ) )
-    {
-        dataPointer[dataIndex].dataID       = 3313;//power limit 0.1%
-        dataPointer[dataIndex].val.value_32  = ( ( uint16_t ) modbusReg )  ;
-        dataPointer[dataIndex].val_type     = TYPE_UINT32;
-        dataIndex++;
-    }
-    //3314
-    modbusReg = ( ( ( uint16_t ) modbusBuf[28] << 8 ) + modbusBuf[29] );
-    if ( yt_data_is_changed ( devNo,modbusReg ,19 ) )
-    {
-        dataPointer[dataIndex].dataID       = 3314;//power limit 0.1%
-        dataPointer[dataIndex].val.value_32  = ( ( uint16_t ) modbusReg )  ;
-        dataPointer[dataIndex].val_type     = TYPE_UINT32;
-        dataIndex++;
-    }
-
-
-
-    //3315
-    modbusReg = ( ( ( uint16_t ) modbusBuf[30] << 8 ) + modbusBuf[31] );
-    if ( yt_data_is_changed ( devNo,modbusReg ,20 ) )
-    {
-        dataPointer[dataIndex].dataID       = 3315;//power limit 0.1%
-        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /10;
-        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
-        dataIndex++;
-    }
-
-    //3320
-    modbusReg = ( ( ( uint16_t ) modbusBuf[40] << 8 ) + modbusBuf[41] );
-    if ( yt_data_is_changed ( devNo,modbusReg ,21 ) )
-    {
-        dataPointer[dataIndex].dataID       = 3320;//power limit 0.1%
-        dataPointer[dataIndex].val.value_f  = ( float ) ( ( int16_t ) modbusReg ) /1000;
-        dataPointer[dataIndex].val_type     = TYPE_FLOAT32;
-        dataIndex++;
-    }
     //3330
-    modbusReg = ( ( ( uint16_t ) modbusBuf[60] << 8 ) + modbusBuf[61] );
+    modbusReg = ( ( ( uint16_t ) modbusBuf[0] << 8 ) + modbusBuf[1] );
     if ( yt_data_is_changed ( devNo,modbusReg ,22 ) )
     {
         dataPointer[dataIndex].dataID       = 3330;//power limit 0.1%
@@ -1594,7 +1586,7 @@ static int32_t parse_yt_data_and_packet_it_4x02 ( const uint8_t * modbusBuf, uin
     }
 
     //3331
-    modbusReg = ( ( ( uint16_t ) modbusBuf[62] << 8 ) + modbusBuf[63] );
+    modbusReg = ( ( ( uint16_t ) modbusBuf[2] << 8 ) + modbusBuf[3] );
     if ( yt_data_is_changed ( devNo,modbusReg ,23 ) )
     {
         dataPointer[dataIndex].dataID       = 3331;//power limit 0.1%
@@ -1604,7 +1596,7 @@ static int32_t parse_yt_data_and_packet_it_4x02 ( const uint8_t * modbusBuf, uin
     }
 
     //3332
-    modbusReg = ( ( ( uint16_t ) modbusBuf[64] << 8 ) + modbusBuf[65] );
+    modbusReg = ( ( ( uint16_t ) modbusBuf[4] << 8 ) + modbusBuf[5] );
     if ( yt_data_is_changed ( devNo,modbusReg ,24 ) )
     {
         dataPointer[dataIndex].dataID       = 3332;//power limit 0.1%
@@ -1614,7 +1606,7 @@ static int32_t parse_yt_data_and_packet_it_4x02 ( const uint8_t * modbusBuf, uin
     }
 
     //3333
-    modbusReg = ( ( ( uint16_t ) modbusBuf[66] << 8 ) + modbusBuf[67] );
+    modbusReg = ( ( ( uint16_t ) modbusBuf[6] << 8 ) + modbusBuf[7] );
     if ( yt_data_is_changed ( devNo,modbusReg ,25 ) )
     {
         dataPointer[dataIndex].dataID       = 3333;//power limit 0.1%
@@ -1623,7 +1615,7 @@ static int32_t parse_yt_data_and_packet_it_4x02 ( const uint8_t * modbusBuf, uin
         dataIndex++;
     }
     //3334
-    modbusReg = ( ( ( uint16_t ) modbusBuf[68] << 8 ) + modbusBuf[69] );
+    modbusReg = ( ( ( uint16_t ) modbusBuf[8] << 8 ) + modbusBuf[9] );
     if ( yt_data_is_changed ( devNo,modbusReg ,26 ) )
     {
         dataPointer[dataIndex].dataID       = 3334;//power limit 0.1%
@@ -1632,7 +1624,7 @@ static int32_t parse_yt_data_and_packet_it_4x02 ( const uint8_t * modbusBuf, uin
         dataIndex++;
     }
     //3335
-    modbusReg = ( ( ( uint16_t ) modbusBuf[70] << 8 ) + modbusBuf[71] );
+    modbusReg = ( ( ( uint16_t ) modbusBuf[10] << 8 ) + modbusBuf[11] );
     if ( yt_data_is_changed ( devNo,modbusReg ,27 ) )
     {
         dataPointer[dataIndex].dataID       = 3335;//power limit 0.1%
@@ -1641,7 +1633,7 @@ static int32_t parse_yt_data_and_packet_it_4x02 ( const uint8_t * modbusBuf, uin
         dataIndex++;
     }
     //3387
-    modbusReg = ( ( ( uint16_t ) modbusBuf[174] << 8 ) + modbusBuf[175] );
+    modbusReg = ( ( ( uint16_t ) modbusBuf[114] << 8 ) + modbusBuf[115] );
     if ( yt_data_is_changed ( devNo,modbusReg ,28 ) )
     {
         dataPointer[dataIndex].dataID       = 3387;//power limit 0.1%
@@ -1652,7 +1644,7 @@ static int32_t parse_yt_data_and_packet_it_4x02 ( const uint8_t * modbusBuf, uin
 
 
     //3388
-    modbusReg = ( ( ( uint16_t ) modbusBuf[176] << 8 ) + modbusBuf[177] );
+    modbusReg = ( ( ( uint16_t ) modbusBuf[116] << 8 ) + modbusBuf[117] );
     if ( yt_data_is_changed ( devNo,modbusReg ,29 ) )
     {
         dataPointer[dataIndex].dataID       = 3388;//power limit 0.1%
@@ -1661,7 +1653,7 @@ static int32_t parse_yt_data_and_packet_it_4x02 ( const uint8_t * modbusBuf, uin
         dataIndex++;
     }
     //3390
-    modbusReg = ( ( ( uint16_t ) modbusBuf[180] << 8 ) + modbusBuf[181] );
+    modbusReg = ( ( ( uint16_t ) modbusBuf[120] << 8 ) + modbusBuf[121] );
     if ( yt_data_is_changed ( devNo,modbusReg ,30 ) )
     {
         dataPointer[dataIndex].dataID       = 3390;//power limit 0.1%
@@ -1670,7 +1662,7 @@ static int32_t parse_yt_data_and_packet_it_4x02 ( const uint8_t * modbusBuf, uin
         dataIndex++;
     }
     //3391
-    modbusReg = ( ( ( uint16_t ) modbusBuf[182] << 8 ) + modbusBuf[183] );
+    modbusReg = ( ( ( uint16_t ) modbusBuf[122] << 8 ) + modbusBuf[123] );
     if ( yt_data_is_changed ( devNo,modbusReg ,31 ) )
     {
         dataPointer[dataIndex].dataID       = 3391;//power limit 0.1%
@@ -1679,7 +1671,7 @@ static int32_t parse_yt_data_and_packet_it_4x02 ( const uint8_t * modbusBuf, uin
         dataIndex++;
     }
     //3392
-    modbusReg = ( ( ( uint16_t ) modbusBuf[184] << 8 ) + modbusBuf[185] );
+    modbusReg = ( ( ( uint16_t ) modbusBuf[124] << 8 ) + modbusBuf[125] );
     if ( yt_data_is_changed ( devNo,modbusReg ,32 ) )
     {
         dataPointer[dataIndex].dataID       = 3392;//power limit 0.1%
@@ -1688,7 +1680,7 @@ static int32_t parse_yt_data_and_packet_it_4x02 ( const uint8_t * modbusBuf, uin
         dataIndex++;
     }
     //3393
-    modbusReg = ( ( ( uint16_t ) modbusBuf[186] << 8 ) + modbusBuf[187] );
+    modbusReg = ( ( ( uint16_t ) modbusBuf[126] << 8 ) + modbusBuf[127] );
     if ( yt_data_is_changed ( devNo,modbusReg ,33 ) )
     {
         dataPointer[dataIndex].dataID       = 3393;//power limit 0.1%
@@ -1697,7 +1689,7 @@ static int32_t parse_yt_data_and_packet_it_4x02 ( const uint8_t * modbusBuf, uin
         dataIndex++;
     }
     //3394
-    modbusReg = ( ( ( uint16_t ) modbusBuf[188] << 8 ) + modbusBuf[189] );
+    modbusReg = ( ( ( uint16_t ) modbusBuf[128] << 8 ) + modbusBuf[129] );
     if ( yt_data_is_changed ( devNo,modbusReg ,34 ) )
     {
         dataPointer[dataIndex].dataID       = 3394;//power limit 0.1%
@@ -1706,7 +1698,7 @@ static int32_t parse_yt_data_and_packet_it_4x02 ( const uint8_t * modbusBuf, uin
         dataIndex++;
     }
     //3395
-    modbusReg = ( ( ( uint16_t ) modbusBuf[190] << 8 ) + modbusBuf[191] );
+    modbusReg = ( ( ( uint16_t ) modbusBuf[130] << 8 ) + modbusBuf[131] );
     if ( yt_data_is_changed ( devNo,modbusReg ,35 ) )
     {
         dataPointer[dataIndex].dataID       = 3395;//power limit 0.1%
@@ -1717,7 +1709,7 @@ static int32_t parse_yt_data_and_packet_it_4x02 ( const uint8_t * modbusBuf, uin
 
 
     //3396
-    modbusReg = ( ( ( uint16_t ) modbusBuf[192] << 8 ) + modbusBuf[193] );
+    modbusReg = ( ( ( uint16_t ) modbusBuf[132] << 8 ) + modbusBuf[133] );
     if ( yt_data_is_changed ( devNo,modbusReg ,36 ) )
     {
         dataPointer[dataIndex].dataID       = 3396;//power limit 0.1%
@@ -1726,7 +1718,7 @@ static int32_t parse_yt_data_and_packet_it_4x02 ( const uint8_t * modbusBuf, uin
         dataIndex++;
     }
     //3397
-    modbusReg = ( ( ( uint16_t ) modbusBuf[194] << 8 ) + modbusBuf[195] );
+    modbusReg = ( ( ( uint16_t ) modbusBuf[134] << 8 ) + modbusBuf[135] );
     if ( yt_data_is_changed ( devNo,modbusReg ,37 ) )
     {
         dataPointer[dataIndex].dataID       = 3397;//power limit 0.1%
@@ -1736,7 +1728,7 @@ static int32_t parse_yt_data_and_packet_it_4x02 ( const uint8_t * modbusBuf, uin
     }
 
     //3398
-    modbusReg = ( ( ( uint16_t ) modbusBuf[196] << 8 ) + modbusBuf[197] );
+    modbusReg = ( ( ( uint16_t ) modbusBuf[136] << 8 ) + modbusBuf[137] );
     if ( yt_data_is_changed ( devNo,modbusReg ,38 ) )
     {
         dataPointer[dataIndex].dataID       = 3398;//power limit 0.1%
@@ -1745,7 +1737,7 @@ static int32_t parse_yt_data_and_packet_it_4x02 ( const uint8_t * modbusBuf, uin
         dataIndex++;
     }
     //3399
-    modbusReg = ( ( ( uint16_t ) modbusBuf[198] << 8 ) + modbusBuf[199] );
+    modbusReg = ( ( ( uint16_t ) modbusBuf[138] << 8 ) + modbusBuf[139] );
     if ( yt_data_is_changed ( devNo,modbusReg ,39 ) )
     {
         dataPointer[dataIndex].dataID       = 3399;//power limit 0.1%
@@ -1756,7 +1748,7 @@ static int32_t parse_yt_data_and_packet_it_4x02 ( const uint8_t * modbusBuf, uin
 
 
     //3404
-    modbusReg = ( ( ( uint16_t ) modbusBuf[208] << 8 ) + modbusBuf[209] );
+    modbusReg = ( ( ( uint16_t ) modbusBuf[148] << 8 ) + modbusBuf[149] );
     if ( yt_data_is_changed ( devNo,modbusReg ,40 ) )
     {
         dataPointer[dataIndex].dataID       = 3404;//power limit 0.1%
@@ -1766,7 +1758,7 @@ static int32_t parse_yt_data_and_packet_it_4x02 ( const uint8_t * modbusBuf, uin
     }
 
     //3405
-    modbusReg = ( ( ( uint16_t ) modbusBuf[210] << 8 ) + modbusBuf[211] );
+    modbusReg = ( ( ( uint16_t ) modbusBuf[150] << 8 ) + modbusBuf[151] );
     if ( yt_data_is_changed ( devNo,modbusReg ,41 ) )
     {
         dataPointer[dataIndex].dataID       = 3405;//power limit 0.1%
@@ -1776,7 +1768,7 @@ static int32_t parse_yt_data_and_packet_it_4x02 ( const uint8_t * modbusBuf, uin
     }
 
     //3411
-    modbusReg = ( ( ( uint16_t ) modbusBuf[212] << 8 ) + modbusBuf[213] );
+    modbusReg = ( ( ( uint16_t ) modbusBuf[152] << 8 ) + modbusBuf[153] );
     if ( yt_data_is_changed ( devNo,modbusReg ,42 ) )
     {
         dataPointer[dataIndex].dataID       = 3411;//power limit 0.1%
@@ -1786,7 +1778,7 @@ static int32_t parse_yt_data_and_packet_it_4x02 ( const uint8_t * modbusBuf, uin
     }
 
     //3412
-    modbusReg = ( ( ( uint16_t ) modbusBuf[214] << 8 ) + modbusBuf[215] );
+    modbusReg = ( ( ( uint16_t ) modbusBuf[154] << 8 ) + modbusBuf[155] );
     if ( yt_data_is_changed ( devNo,modbusReg ,43 ) )
     {
         dataPointer[dataIndex].dataID       = 3412;//power limit 0.1%
